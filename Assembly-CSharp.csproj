@@ -10,7 +10,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{03947482-F340-ABD1-F2E2-005C567113F1}</ProjectGuid>
+    <ProjectGuid>{DFD06EFA-F670-EF96-50F3-D94D5942DE29}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -61,18 +61,45 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.24f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\EntityHealth.cs" />
-    <Compile Include="Assets\MeleeWeaponPlayer.cs" />
-    <Compile Include="Assets\SpawnHostile.cs" />
-    <Compile Include="Assets\HealthScript.cs" />
-    <Compile Include="Assets\GunScript.cs" />
-    <Compile Include="Assets\RandomPatrolling.cs" />
-    <Compile Include="Assets\DetectAlertChase.cs" />
-    <Compile Include="Assets\CameraY.cs" />
-    <Compile Include="Assets\CameraXZ.cs" />
-    <Compile Include="Assets\CameraAimController.cs" />
-    <Compile Include="Assets\PlayerController.cs" />
-    <Compile Include="Assets\MeleeWeaponAI.cs" />
+    <Compile Include="Assets\Scripts\ScoreManager.cs" />
+    <Compile Include="Assets\Scripts\DetectAlertChase.cs" />
+    <Compile Include="Assets\Scripts\PlayerController.cs" />
+    <Compile Include="Assets\Scripts\CameraAimController.cs" />
+    <Compile Include="Assets\Scripts\PlayerHealthBar.cs" />
+    <Compile Include="Assets\Scripts\GunScript.cs" />
+    <Compile Include="Assets\Scripts\CameraY.cs" />
+    <Compile Include="Assets\Scripts\CameraXZ.cs" />
+    <Compile Include="Assets\Scripts\AmmoDisplay.cs" />
+    <Compile Include="Assets\Scripts\MeleeWeaponPlayer.cs" />
+    <Compile Include="Assets\Scripts\EntityHealth.cs" />
+    <Compile Include="Assets\Scripts\SpawnHostile.cs" />
+    <Compile Include="Assets\Scripts\RandomPatrolling.cs" />
+    <Compile Include="Assets\Scripts\MeleeWeaponAI.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile-2-Pass.shader" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
+    <None Include="Assets\TextMesh Pro\Shaders\SDFFunctions.hlsl" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
+    <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF.shader" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile SSD.shader" />
+    <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
+    <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />
+    <None Include="Assets\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile.shader" />
+    <None Include="Assets\TextMesh Pro\Shaders\TMP_Sprite.shader" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
