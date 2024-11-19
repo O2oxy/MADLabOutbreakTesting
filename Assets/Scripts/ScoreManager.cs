@@ -6,7 +6,7 @@ public class ScoreManager : MonoBehaviour
     [Header("UI Components")]
     public TextMeshProUGUI scoreText;
 
-    private int currentScore = 0;
+    private int currentScore;
 
     void Start()
     {
@@ -24,10 +24,10 @@ public class ScoreManager : MonoBehaviour
     {
         if (scoreText == null)
         {
-            Debug.LogError("score Text is not assigned!");
+            Debug.LogError("Score Text is not assigned!");
             return;
         }
 
-        scoreText.text = $"Score: {currentScore}";
+        scoreText.text = $"Points: {currentScore}";
     }
 }

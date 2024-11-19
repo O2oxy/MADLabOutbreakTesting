@@ -6,23 +6,28 @@ public class EntityHealth : MonoBehaviour
     public float maxHealth = 100f;
     private float currentHealth;
 
-    public GameObject rootObject; // Root object to destroy
-    public PlayerHealthBar healthBar; // Reference to the PlayerHealthBar script
+    [Header("Score Settings")]
+    public int pointsOnDeath = 10; // Points awarded for killing this entity
+
+    private ScoreManager scoreManager;
+
+    public GameObject rootObject; // Optional: Specify the root object to destroy
 
     void Start()
     {
         currentHealth = maxHealth;
 
-        // Initialize health bar if assigned
-        if (healthBar != null)
-        {
-            healthBar.SetMaxHealth(maxHealth);
-        }
-
-        // Default root object to the top-level parent if not assigned
+        // Assign the root object if not set
         if (rootObject == null)
         {
             rootObject = transform.root.gameObject;
+        }
+
+        // Locate the ScoreManager in the scene
+        scoreManager = FindObjectOfType<ScoreManager>();
+        if (scoreManager == null)
+        {
+            Debug.LogError("ScoreManager not found in the scene!");
         }
     }
 
@@ -30,12 +35,6 @@ public class EntityHealth : MonoBehaviour
     {
         currentHealth -= damageAmount;
         Debug.Log(gameObject.name + " took " + damageAmount + " damage. Remaining Health: " + currentHealth);
-
-        // Update health bar
-        if (healthBar != null)
-        {
-            healthBar.UpdateHealth(currentHealth);
-        }
 
         if (currentHealth <= 0)
         {
@@ -46,6 +45,14 @@ public class EntityHealth : MonoBehaviour
     private void Die()
     {
         Debug.Log(rootObject.name + " has died.");
+
+        // Award points if ScoreManager exists
+        if (scoreManager != null)
+        {
+            scoreManager.AddScore(pointsOnDeath);
+        }
+
+        // Destroy the root object
         Destroy(rootObject);
     }
 }
