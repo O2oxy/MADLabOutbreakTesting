@@ -71,6 +71,7 @@
     <Compile Include="Assets\Scripts\CameraXZ.cs" />
     <Compile Include="Assets\Scripts\AmmoDisplay.cs" />
     <Compile Include="Assets\Scripts\MeleeWeaponPlayer.cs" />
+    <Compile Include="Assets\Scripts\Boss.cs" />
     <Compile Include="Assets\Scripts\EntityHealth.cs" />
     <Compile Include="Assets\Scripts\SpawnHostile.cs" />
     <Compile Include="Assets\Scripts\RandomPatrolling.cs" />

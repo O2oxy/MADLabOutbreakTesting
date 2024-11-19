@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class EntityHealth : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class EntityHealth : MonoBehaviour
     private ScoreManager scoreManager;
 
     public GameObject rootObject; // Optional: Specify the root object to destroy
+    public event Action<GameObject> OnDeath; // Event for death callback
 
     void Start()
     {
@@ -24,7 +26,7 @@ public class EntityHealth : MonoBehaviour
         }
 
         // Locate the ScoreManager in the scene
-        scoreManager = FindObjectOfType<ScoreManager>();
+        scoreManager = FindAnyObjectByType<ScoreManager>();
         if (scoreManager == null)
         {
             Debug.LogError("ScoreManager not found in the scene!");
@@ -52,6 +54,7 @@ public class EntityHealth : MonoBehaviour
             scoreManager.AddScore(pointsOnDeath);
         }
 
+        OnDeath?.Invoke(rootObject); // Trigger the death event
         // Destroy the root object
         Destroy(rootObject);
     }
