@@ -7,17 +7,27 @@ public class EntityHealth : MonoBehaviour
     public float maxHealth = 100f;
     private float currentHealth;
 
+    // Public getter for currentHealth
+    public float CurrentHealth => currentHealth;
+
     [Header("Score Settings")]
     public int pointsOnDeath = 10; // Points awarded for killing this entity
 
     private ScoreManager scoreManager;
 
     public GameObject rootObject; // Optional: Specify the root object to destroy
+    public PlayerHealthBar healthBar; // Reference to the PlayerHealthBar script
     public event Action<GameObject> OnDeath; // Event for death callback
 
     void Start()
     {
         currentHealth = maxHealth;
+
+        // Initialize health bar if assigned
+        if (healthBar != null)
+        {
+            healthBar.SetMaxHealth(maxHealth);
+        }
 
         // Assign the root object if not set
         if (rootObject == null)
@@ -37,6 +47,12 @@ public class EntityHealth : MonoBehaviour
     {
         currentHealth -= damageAmount;
         Debug.Log(gameObject.name + " took " + damageAmount + " damage. Remaining Health: " + currentHealth);
+
+        // Update health bar
+        if (healthBar != null)
+        {
+            healthBar.UpdateHealth(currentHealth);
+        }
 
         if (currentHealth <= 0)
         {

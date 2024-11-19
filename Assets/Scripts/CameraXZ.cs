@@ -3,20 +3,29 @@ using UnityEngine;
 public class CameraXZ : MonoBehaviour
 {
     [Header("Rotation Settings")]
-    public float mouseSensitivity = 100f;
+    public static float mouseSensitivity = 100f; // Shared sensitivity
+    public Transform playerBody; // Reference to the player object
 
     void Start()
     {
-        // Lock the cursor to the center of the screen
         Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
     {
-        // Mouse input for horizontal rotation (left and right)
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+        // Cap Time.deltaTime to avoid large input variations
+        float deltaTime = Mathf.Clamp(Time.deltaTime, 0, 0.02f);
 
-        // Rotate the camera around the player on the y-axis
-        transform.Rotate(Vector3.up * mouseX);
+        // Mouse input for horizontal rotation
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * deltaTime;
+
+        // Log input and rotation for debugging
+        //Debug.Log("Mouse X: " + Input.GetAxis("Mouse X"));
+        //Debug.Log("Player Rotation Before: " + playerBody.eulerAngles);
+
+        // Rotate the player horizontally
+        playerBody.Rotate(Vector3.up * mouseX);
+
+        //Debug.Log("Player Rotation After: " + playerBody.eulerAngles);
     }
 }

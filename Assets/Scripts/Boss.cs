@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -20,13 +20,22 @@ public class BossSpawner : MonoBehaviour
     public float spawnIntervalAt50Percent = 1.5f;
     public float spawnIntervalAt25Percent = 1f;
 
-    [Header("Boss Stats")]
-    public float bossHealth = 100f;
-    public float maxHealth = 100f;
-
     private int currentWaveEnemyCount;
     private int activeEnemyCount;
     private bool isSpawning = false;
+
+    private string currentHealthStage = "Full Health"; // Tracks current health stage for debugging
+    private EntityHealth entityHealth; // Reference to EntityHealth component
+
+    void Start()
+    {
+        // Get the EntityHealth component from the same GameObject
+        entityHealth = GetComponent<EntityHealth>();
+        if (entityHealth == null)
+        {
+            Debug.LogError("EntityHealth component not found on the BossSpawner GameObject!");
+        }
+    }
 
     void Update()
     {
@@ -99,16 +108,37 @@ public class BossSpawner : MonoBehaviour
 
     int GetEnemiesToSpawn()
     {
+        if (entityHealth == null)
+            return enemiesAt100Percent; // Fallback if EntityHealth is missing
+
+        float bossHealth = entityHealth.CurrentHealth;
+        float maxHealth = entityHealth.maxHealth;
+
         if (bossHealth <= maxHealth * 0.25f)
+        {
+            LogHealthStage("Critical Health (≤25%)");
             return enemiesAt25Percent;
+        }
         else if (bossHealth <= maxHealth * 0.5f)
+        {
+            LogHealthStage("Half Health (≤50%)");
             return enemiesAt50Percent;
+        }
         else
+        {
+            LogHealthStage("Full Health (>50%)");
             return enemiesAt100Percent;
+        }
     }
 
     float GetWaveDelay()
     {
+        if (entityHealth == null)
+            return waveDelayAt100Percent; // Fallback if EntityHealth is missing
+
+        float bossHealth = entityHealth.CurrentHealth;
+        float maxHealth = entityHealth.maxHealth;
+
         if (bossHealth <= maxHealth * 0.25f)
             return waveDelayAt25Percent;
         else if (bossHealth <= maxHealth * 0.5f)
@@ -119,11 +149,26 @@ public class BossSpawner : MonoBehaviour
 
     float GetSpawnInterval()
     {
+        if (entityHealth == null)
+            return spawnIntervalAt100Percent; // Fallback if EntityHealth is missing
+
+        float bossHealth = entityHealth.CurrentHealth;
+        float maxHealth = entityHealth.maxHealth;
+
         if (bossHealth <= maxHealth * 0.25f)
             return spawnIntervalAt25Percent;
         else if (bossHealth <= maxHealth * 0.5f)
             return spawnIntervalAt50Percent;
         else
             return spawnIntervalAt100Percent;
+    }
+
+    void LogHealthStage(string newStage)
+    {
+        if (currentHealthStage != newStage)
+        {
+            currentHealthStage = newStage;
+            Debug.Log($"Boss Health Stage: {currentHealthStage}");
+        }
     }
 }
