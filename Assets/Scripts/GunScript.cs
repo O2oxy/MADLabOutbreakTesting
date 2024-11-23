@@ -14,7 +14,6 @@ public class Gun : MonoBehaviour
     public float aimSpread = 0.01f;     // Spread when aiming
     public float bulletRange = 50f;
     public float damage = 20f;
-    public float minDistanceForTracer = 3f; // Minimum distance to render tracers
 
     [Header("Effects")]
     public GameObject bulletTracerPrefab;
@@ -104,16 +103,6 @@ public class Gun : MonoBehaviour
         if (Physics.Raycast(ray, out hit, bulletRange))
         {
             targetPoint = hit.point;
-
-            // Apply damage if the hit object is not tagged as "Player"
-            if (!hit.collider.CompareTag("Player"))
-            {
-                EntityHealth targetHealth = hit.collider.GetComponent<EntityHealth>();
-                if (targetHealth != null)
-                {
-                    targetHealth.TakeDamage(damage);
-                }
-            }
         }
         else
         {
@@ -128,16 +117,12 @@ public class Gun : MonoBehaviour
         Vector3 spread = new Vector3(Random.Range(-currentSpread, currentSpread), Random.Range(-currentSpread, currentSpread), 0);
         shotDirection += transform.TransformDirection(spread);
 
-        // Check if the distance is greater than the minimum distance for tracers
-        if (Vector3.Distance(transform.position, targetPoint) >= minDistanceForTracer)
-        {
-            CreateBulletTracer(transform.position, transform.position + shotDirection * bulletRange);
-        }
+        // Fire bullet tracer
+        CreateBulletTracer(transform.position, transform.position + shotDirection * bulletRange);
 
         ammoCount--;
         nextFireTime = Time.time + 1f / fireRate;
     }
-
 
     private System.Collections.IEnumerator BurstFire()
     {
@@ -162,10 +147,10 @@ public class Gun : MonoBehaviour
         Debug.Log("Reload complete");
     }
 
-    private void CreateBulletTracer(Vector3 startPosition, Vector3 endPosition)
+    private void CreateBulletTracer(Vector3 startPosition, Vector3 targetPosition)
     {
         GameObject tracer = Instantiate(bulletTracerPrefab, startPosition, Quaternion.identity);
-        StartCoroutine(MoveTracer(tracer, endPosition));
+        StartCoroutine(MoveTracer(tracer, targetPosition));
     }
 
     private System.Collections.IEnumerator MoveTracer(GameObject tracer, Vector3 targetPosition)
@@ -177,7 +162,29 @@ public class Gun : MonoBehaviour
         while (Vector3.Distance(tracer.transform.position, targetPosition) > 0.1f)
         {
             float traveled = (Time.time - startTime) * tracerSpeed;
-            tracer.transform.position = Vector3.Lerp(startPosition, targetPosition, traveled / distance);
+            Vector3 nextPosition = Vector3.Lerp(startPosition, targetPosition, traveled / distance);
+
+            // Check for collisions along the tracer's path
+            if (Physics.Raycast(tracer.transform.position, nextPosition - tracer.transform.position, out RaycastHit hit, Vector3.Distance(tracer.transform.position, nextPosition)))
+            {
+                // Skip damage if the hit entity is the player
+                if (!hit.collider.CompareTag("Player"))
+                {
+                    // Apply damage to the hit target
+                    EntityHealth targetHealth = hit.collider.GetComponent<EntityHealth>();
+                    if (targetHealth != null)
+                    {
+                        targetHealth.TakeDamage(damage);
+                    }
+                }
+
+                // Move the tracer to the hit point and destroy it
+                tracer.transform.position = hit.point;
+                break;
+            }
+
+            // Move the tracer
+            tracer.transform.position = nextPosition;
             yield return null;
         }
 
@@ -188,9 +195,11 @@ public class Gun : MonoBehaviour
     {
         if (shootSound != null)
         {
+            audioSource.pitch = Random.Range(0.95f, 1.05f); // Slight pitch variation
             audioSource.PlayOneShot(shootSound);
         }
     }
+
 
     private void PlayReloadSound()
     {
