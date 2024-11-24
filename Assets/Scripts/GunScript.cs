@@ -14,11 +14,12 @@ public class Gun : MonoBehaviour
     public float aimSpread = 0.01f;     // Spread when aiming
     public float bulletRange = 50f;
     public float damage = 20f;
+    public int bulletsPerShot = 1;      // Number of bullets per shot
 
     [Header("Effects")]
     public GameObject bulletTracerPrefab;
-    public float tracerSpeed = 100f;        // Speed of the tracer effect
-    public ParticleSystem muzzleFlash;     // Muzzle flash effect
+    public float tracerSpeed = 100f;
+    public ParticleSystem muzzleFlash;
 
     [Header("Audio Settings")]
     public AudioClip shootSound;
@@ -30,12 +31,13 @@ public class Gun : MonoBehaviour
     public Camera playerCamera;
 
     [Header("Ammo Tracking")]
-    public int ammoCount { get; private set; } // Current ammo count
-    public int magazineSizePublic { get; private set; } // Publicly exposed magazine size for AmmoDisplay
+    public int ammoCount { get; private set; }
+    public int magazineSizePublic { get; private set; }
 
     private float nextFireTime;
     private int shotsFiredInBurst;
     private bool isReloading;
+    private Vector3 originalCameraPosition;
 
     void Start()
     {
@@ -46,6 +48,8 @@ public class Gun : MonoBehaviour
         {
             playerCamera = Camera.main;
         }
+
+        originalCameraPosition = playerCamera.transform.localPosition;
 
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
@@ -92,35 +96,42 @@ public class Gun : MonoBehaviour
         if (Time.time < nextFireTime || ammoCount <= 0)
             return;
 
-        PlayShootSound();
-        PlayMuzzleFlash();
-
-        // Calculate the shooting direction
-        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-        RaycastHit hit;
-        Vector3 targetPoint;
-
-        if (Physics.Raycast(ray, out hit, bulletRange))
+        // Loop to fire multiple bullets per shot
+        for (int i = 0; i < bulletsPerShot; i++)
         {
-            targetPoint = hit.point;
+            if (ammoCount <= 0) break; // Stop if no ammo left
+
+            PlayShootSound();
+            PlayMuzzleFlash();
+
+            // Calculate the shooting direction
+            Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+            RaycastHit hit;
+            Vector3 targetPoint;
+
+            if (Physics.Raycast(ray, out hit, bulletRange))
+            {
+                targetPoint = hit.point;
+            }
+            else
+            {
+                targetPoint = ray.GetPoint(bulletRange);
+            }
+
+            // Calculate the direction from the gun to the target point
+            Vector3 shotDirection = (targetPoint - transform.position).normalized;
+
+            // Apply bullet spread based on whether the player is aiming
+            float currentSpread = Input.GetButton("Fire2") ? aimSpread : bulletSpread;
+            Vector3 spread = new Vector3(Random.Range(-currentSpread, currentSpread), Random.Range(-currentSpread, currentSpread), 0);
+            shotDirection += transform.TransformDirection(spread);
+
+            // Fire bullet tracer
+            CreateBulletTracer(transform.position, transform.position + shotDirection * bulletRange);
+
+            ammoCount--;
         }
-        else
-        {
-            targetPoint = ray.GetPoint(bulletRange);
-        }
 
-        // Calculate the direction from the gun to the target point
-        Vector3 shotDirection = (targetPoint - transform.position).normalized;
-
-        // Apply bullet spread based on whether the player is aiming
-        float currentSpread = Input.GetButton("Fire2") ? aimSpread : bulletSpread;
-        Vector3 spread = new Vector3(Random.Range(-currentSpread, currentSpread), Random.Range(-currentSpread, currentSpread), 0);
-        shotDirection += transform.TransformDirection(spread);
-
-        // Fire bullet tracer
-        CreateBulletTracer(transform.position, transform.position + shotDirection * bulletRange);
-
-        ammoCount--;
         nextFireTime = Time.time + 1f / fireRate;
     }
 
@@ -167,15 +178,11 @@ public class Gun : MonoBehaviour
             // Check for collisions along the tracer's path
             if (Physics.Raycast(tracer.transform.position, nextPosition - tracer.transform.position, out RaycastHit hit, Vector3.Distance(tracer.transform.position, nextPosition)))
             {
-                // Skip damage if the hit entity is the player
-                if (!hit.collider.CompareTag("Player"))
+                // Apply damage to the hit target
+                EntityHealth targetHealth = hit.collider.GetComponent<EntityHealth>();
+                if (targetHealth != null)
                 {
-                    // Apply damage to the hit target
-                    EntityHealth targetHealth = hit.collider.GetComponent<EntityHealth>();
-                    if (targetHealth != null)
-                    {
-                        targetHealth.TakeDamage(damage);
-                    }
+                    targetHealth.TakeDamage(damage);
                 }
 
                 // Move the tracer to the hit point and destroy it
@@ -199,7 +206,6 @@ public class Gun : MonoBehaviour
             audioSource.PlayOneShot(shootSound);
         }
     }
-
 
     private void PlayReloadSound()
     {
