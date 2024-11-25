@@ -1,15 +1,9 @@
-#if !UNITY_2019_3_OR_NEWER
-#define CINEMACHINE_PHYSICS
-#define CINEMACHINE_PHYSICS_2D
-#endif
-
 using UnityEngine;
 
-namespace Cinemachine
+namespace Unity.Cinemachine
 {
     /// <summary>An ad-hoc collection of helpers, used by Cinemachine
     /// or its editor tools in various places</summary>
-    [DocumentationSorting(DocumentationSortingAttribute.Level.Undoc)]
     public static class RuntimeUtility
     {
         /// <summary>Convenience to destroy an object, using the appropriate method depending 
@@ -48,8 +42,8 @@ namespace Cinemachine
         }
         
 #if CINEMACHINE_PHYSICS
-        private static RaycastHit[] s_HitBuffer = new RaycastHit[16];
-        private static int[] s_PenetrationIndexBuffer = new int[16];
+        static RaycastHit[] s_HitBuffer = new RaycastHit[16];
+        static int[] s_PenetrationIndexBuffer = new int[16];
 
         /// <summary>
         /// Perform a raycast, but pass through any objects that have a given tag
@@ -64,14 +58,7 @@ namespace Cinemachine
             Ray ray, out RaycastHit hitInfo, float rayLength, int layerMask, in string ignoreTag)
         {
             if (ignoreTag.Length == 0)
-            {
-                if (Physics.Raycast(
-                    ray, out hitInfo, rayLength, layerMask,
-                    QueryTriggerInteraction.Ignore))
-                {
-                    return true;
-                }
-            }
+                return Physics.Raycast(ray, out hitInfo, rayLength, layerMask, QueryTriggerInteraction.Ignore);
             else
             {
                 int closestHit = -1;
@@ -99,19 +86,24 @@ namespace Cinemachine
         /// <summary>
         /// Perform a sphere cast, but pass through objects with a given tag
         /// </summary>
-        /// <param name="rayStart">Start of the ray</param>
+        /// <param name="ray">The ray to cast - this will be the center of the spherecast.</param>
         /// <param name="radius">Radius of the sphere cast</param>
-        /// <param name="dir">Normalized direction of the ray</param>
         /// <param name="hitInfo">Results go here</param>
         /// <param name="rayLength">Length of the ray</param>
         /// <param name="layerMask">Layers to include</param>
         /// <param name="ignoreTag">Tag to ignore</param>
         /// <returns>True if something is hit.  Results in hitInfo.</returns>
         public static bool SphereCastIgnoreTag(
-            Vector3 rayStart, float radius, Vector3 dir, 
+            Ray ray, float radius, 
             out RaycastHit hitInfo, float rayLength, 
             int layerMask, in string ignoreTag)
         {
+            if (radius < UnityVectorExtensions.Epsilon)
+                return RaycastIgnoreTag(ray, out hitInfo, rayLength, layerMask, ignoreTag);
+
+            Vector3 rayStart = ray.origin;
+            Vector3 dir = ray.direction;
+
             int closestHit = -1;
             int numPenetrations = 0;
             float penetrationDistanceSum = 0;
@@ -154,14 +146,14 @@ namespace Cinemachine
                         continue; // don't know what's going on, just forget about it
                     }
                 }
-                if (closestHit < 0 || h.distance < s_HitBuffer[closestHit].distance)
+                if (h.collider != null && (closestHit < 0 || h.distance < s_HitBuffer[closestHit].distance))
                 {
                     closestHit = i;
                 }
             }
 
             // Naively combine penetrating items
-            if (numPenetrations > 1)
+            if (numPenetrations > 1 && penetrationDistanceSum > UnityVectorExtensions.Epsilon)
             {
                 hitInfo = new RaycastHit();
                 for (int i = 0; i < numPenetrations; ++i)
@@ -179,23 +171,28 @@ namespace Cinemachine
             if (closestHit >= 0)
             {
                 hitInfo = s_HitBuffer[closestHit];
-                if (numHits == s_HitBuffer.Length)
-                    s_HitBuffer = new RaycastHit[s_HitBuffer.Length * 2]; // full! grow for next time
-
                 return true;
             }
             hitInfo = new RaycastHit();
             return false;
         }
 
-        private static SphereCollider s_ScratchCollider;
-        private static GameObject s_ScratchColliderGameObject;
+        static SphereCollider s_ScratchCollider;
+        static GameObject s_ScratchColliderGameObject;
+        static int s_ScratchColliderRefCount;
 
-        internal static SphereCollider GetScratchCollider()
+        /// <summary>
+        /// This is a hidden sphere collider that won't interfere with the scene and can be used 
+        /// for making scratch calculations.  It is a single static object that gets created on first 
+        /// demand and recycled on subsequent demands.  Call DestroyScratchCollider() to destroy the cached
+        /// object.
+        /// </summary>
+        /// <returns>A cached SphereCollider that will get recycled on subsequent calls.</returns>
+        public static SphereCollider GetScratchCollider()
         {
             if (s_ScratchColliderGameObject == null)
             {
-                s_ScratchColliderGameObject = new GameObject("Cinemachine Scratch Collider");
+                s_ScratchColliderGameObject = new("Cinemachine Scratch Collider");
                 s_ScratchColliderGameObject.hideFlags = HideFlags.HideAndDontSave;
                 s_ScratchColliderGameObject.transform.position = Vector3.zero;
                 s_ScratchColliderGameObject.SetActive(true);
@@ -205,20 +202,25 @@ namespace Cinemachine
                 rb.detectCollisions = false;
                 rb.isKinematic = true;
             }
+            ++s_ScratchColliderRefCount;
             return s_ScratchCollider;
         }
 
-        internal static void DestroyScratchCollider()
+        /// <summary>
+        /// This will destroy the object created by GetScratchCollider() and cause the next call 
+        /// to GetScratchCollider() to create a new cached object.
+        /// </summary>
+        public static void DestroyScratchCollider()
         {
-            if (s_ScratchColliderGameObject != null)
+            if (--s_ScratchColliderRefCount == 0)
             {
                 s_ScratchColliderGameObject.SetActive(false);
                 DestroyObject(s_ScratchColliderGameObject.GetComponent<Rigidbody>());
+                DestroyObject(s_ScratchCollider);
+                DestroyObject(s_ScratchColliderGameObject);
+                s_ScratchColliderGameObject = null;
+                s_ScratchCollider = null;
             }
-            DestroyObject(s_ScratchCollider);
-            DestroyObject(s_ScratchColliderGameObject);
-            s_ScratchColliderGameObject = null;
-            s_ScratchCollider = null;
         }
 #endif
 

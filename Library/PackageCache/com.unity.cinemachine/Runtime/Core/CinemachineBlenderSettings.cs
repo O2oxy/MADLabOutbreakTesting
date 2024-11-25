@@ -1,43 +1,44 @@
 using UnityEngine;
 using System;
+using UnityEngine.Serialization;
 
-namespace Cinemachine
+namespace Unity.Cinemachine
 {
     /// <summary>
     /// Asset that defines the rules for blending between Virtual Cameras.
     /// </summary>
-    [DocumentationSorting(DocumentationSortingAttribute.Level.UserRef)]
     [Serializable]
     [HelpURL(Documentation.BaseURL + "manual/CinemachineBlending.html")]
     public sealed class CinemachineBlenderSettings : ScriptableObject
     {
         /// <summary>
-        /// Container specifying how two specific Cinemachine Virtual Cameras
-        /// blend together.
+        /// Container specifying how two specific CinemachineCameras blend together.
         /// </summary>
-        [DocumentationSorting(DocumentationSortingAttribute.Level.UserRef)]
         [Serializable]
         public struct CustomBlend
         {
-            /// <summary>When blending from this camera</summary>
-            [Tooltip("When blending from this camera")]
-            public string m_From;
+            /// <summary>When blending from a camera with this name</summary>
+            [Tooltip("When blending from a camera with this name")]
+            [FormerlySerializedAs("m_From")]
+            public string From;
 
-            /// <summary>When blending to this camera</summary>
-            [Tooltip("When blending to this camera")]
-            public string m_To;
+            /// <summary>When blending to a camera with this name</summary>
+            [Tooltip("When blending to a camera with this name")]
+            [FormerlySerializedAs("m_To")]
+            public string To;
 
             /// <summary>Blend curve definition</summary>
-            [CinemachineBlendDefinitionProperty]
             [Tooltip("Blend curve definition")]
-            public CinemachineBlendDefinition m_Blend;
+            [FormerlySerializedAs("m_Blend")]
+            public CinemachineBlendDefinition Blend;
         }
         /// <summary>The array containing explicitly defined blends between two Virtual Cameras</summary>
         [Tooltip("The array containing explicitly defined blends between two Virtual Cameras")]
-        public CustomBlend[] m_CustomBlends = null;
+        [FormerlySerializedAs("m_CustomBlends")]
+        public CustomBlend[] CustomBlends = null;
 
-        /// <summary>Internal API for the inspector editopr: a label to represent any camera</summary>
-        public const string kBlendFromAnyCameraLabel = "**ANY CAMERA**";
+        /// <summary>Internal API for the inspector editor: a label to represent any camera</summary>
+        internal const string kBlendFromAnyCameraLabel = "**ANY CAMERA**";
 
         /// <summary>
         /// Attempts to find a blend definition which matches the to and from cameras as specified.
@@ -46,7 +47,7 @@ namespace Cinemachine
         /// <param name="fromCameraName">The game object name of the from camera</param>
         /// <param name="toCameraName">The game object name of the to camera</param>
         /// <param name="defaultBlend">Blend to return if no custom blend found.</param>
-        /// <returns></returns>
+        /// <returns>The blend definition to use for the blend.</returns>
         public CinemachineBlendDefinition GetBlendForVirtualCameras(
             string fromCameraName, string toCameraName, CinemachineBlendDefinition defaultBlend)
         {
@@ -54,36 +55,36 @@ namespace Cinemachine
             bool gotMeToAny = false;
             CinemachineBlendDefinition anyToMe = defaultBlend;
             CinemachineBlendDefinition meToAny = defaultBlend;
-            if (m_CustomBlends != null)
+            if (CustomBlends != null)
             {
-                for (int i = 0; i < m_CustomBlends.Length; ++i)
+                for (int i = 0; i < CustomBlends.Length; ++i)
                 {
                     // Attempt to find direct name first
-                    CustomBlend blendParams = m_CustomBlends[i];
-                    if ((blendParams.m_From == fromCameraName)
-                        && (blendParams.m_To == toCameraName))
+                    CustomBlend blendParams = CustomBlends[i];
+                    if ((blendParams.From == fromCameraName)
+                        && (blendParams.To == toCameraName))
                     {
-                        return blendParams.m_Blend;
+                        return blendParams.Blend;
                     }
                     // If we come across applicable wildcards, remember them
-                    if (blendParams.m_From == kBlendFromAnyCameraLabel)
+                    if (blendParams.From == kBlendFromAnyCameraLabel)
                     {
                         if (!string.IsNullOrEmpty(toCameraName)
-                            && blendParams.m_To == toCameraName)
+                            && blendParams.To == toCameraName)
                         {
                             if (!gotAnyToMe)
-                                anyToMe = blendParams.m_Blend;
+                                anyToMe = blendParams.Blend;
                             gotAnyToMe = true;
                         }
-                        else if (blendParams.m_To == kBlendFromAnyCameraLabel)
-                            defaultBlend = blendParams.m_Blend;
+                        else if (blendParams.To == kBlendFromAnyCameraLabel)
+                            defaultBlend = blendParams.Blend;
                     }
-                    else if (blendParams.m_To == kBlendFromAnyCameraLabel
+                    else if (blendParams.To == kBlendFromAnyCameraLabel
                              && !string.IsNullOrEmpty(fromCameraName)
-                             && blendParams.m_From == fromCameraName)
+                             && blendParams.From == fromCameraName)
                     {
                         if (!gotMeToAny)
-                            meToAny = blendParams.m_Blend;
+                            meToAny = blendParams.Blend;
                         gotMeToAny = true;
                     }
                 }
@@ -99,6 +100,40 @@ namespace Cinemachine
                 return meToAny;
 
             return defaultBlend;
+        }
+
+        /// <summary>
+        /// Find a blend curve for blending from one ICinemachineCamera to another.
+        /// If there is a specific blend defined for these cameras it will be used, otherwise
+        /// a default blend will be created, which could be a cut.
+        /// 
+        /// CinemachineCore.GetBlendOverride will be called at the end, so that the
+        /// client may override the choice of blend.
+        /// </summary>
+        /// <param name="outgoing">The camera we're blending from.</param>
+        /// <param name="incoming">The camera we're blending to.</param>
+        /// <param name="defaultBlend">Blend to return if no custom blend found.</param>
+        /// <param name="customBlends">The custom blends asset to search, or null.</param>
+        /// <param name="owner">The object that is requesting the blend, for 
+        /// GetBlendOverride callback context.</param>
+        /// <returns>The blend to use for this camera transition.</returns>
+        public static CinemachineBlendDefinition LookupBlend(
+            ICinemachineCamera outgoing, ICinemachineCamera incoming,
+            CinemachineBlendDefinition defaultBlend,
+            CinemachineBlenderSettings customBlends,
+            UnityEngine.Object owner)
+        {
+            // Get the blend curve that's most appropriate for these cameras
+            CinemachineBlendDefinition blend = defaultBlend;
+            if (customBlends != null)
+            {
+                string fromCameraName = (outgoing != null) ? outgoing.Name : string.Empty;
+                string toCameraName = (incoming != null) ? incoming.Name : string.Empty;
+                blend = customBlends.GetBlendForVirtualCameras(fromCameraName, toCameraName, blend);
+            }
+            if (CinemachineCore.GetBlendOverride != null)
+                blend = CinemachineCore.GetBlendOverride(outgoing, incoming, blend, owner);
+            return blend;
         }
     }
 }

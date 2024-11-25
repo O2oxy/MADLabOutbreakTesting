@@ -1,37 +1,51 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Cinemachine
+namespace Unity.Cinemachine
 {
     /// <summary>
-    /// Base class for a Cinemachine Virtual Camera extension module.
+    /// Base class for a CinemachineCamera extension module.
     /// Hooks into the Cinemachine Pipeline.  Use this to add extra processing 
     /// to the vcam, modifying its generated state
     /// </summary>
-    [DocumentationSorting(DocumentationSortingAttribute.Level.API)]
     public abstract class CinemachineExtension : MonoBehaviour
     {
-        /// <summary>Useful constant for very small floats</summary>
-        protected const float Epsilon = Utility.UnityVectorExtensions.Epsilon;
+        /// <summary>
+        /// Extensions that need to save per-vcam state should inherit from this class and add
+        /// appropriate member variables.  Use GetExtraState() to access.
+        /// </summary>
+        protected class VcamExtraStateBase
+        {
+            /// <summary>The virtual camera being modified by the extension</summary>
+            public CinemachineVirtualCameraBase Vcam;
+        }
 
-        /// <summary>Get the CinemachineVirtualCamera to which this extension is attached</summary>
-        public CinemachineVirtualCameraBase VirtualCamera
+        CinemachineVirtualCameraBase m_VcamOwner;
+        Dictionary<CinemachineVirtualCameraBase, VcamExtraStateBase> m_ExtraState;
+
+        /// <summary>Useful constant for very small floats</summary>
+        protected const float Epsilon = UnityVectorExtensions.Epsilon;
+
+        /// <summary>Get the CinemachineVirtualCamera to which this extension is attached.
+        /// This is distinct from the CinemachineCameras that the extension will modify,
+        /// as extensions owned by manager cameras will be applied to all the CinemachineCamera children.</summary>
+        public CinemachineVirtualCameraBase ComponentOwner
         {
             get
             {
-                if (m_vcamOwner == null)
-                    m_vcamOwner = GetComponent<CinemachineVirtualCameraBase>();
-                return m_vcamOwner;
+                if (m_VcamOwner == null)
+                    TryGetComponent(out m_VcamOwner);
+                return m_VcamOwner;
             }
         }
-        CinemachineVirtualCameraBase m_vcamOwner;
 
         /// <summary>Connect to virtual camera pipeline.
         /// Override implementations must call this base implementation</summary>
-        protected virtual void Awake()
-        {
-            ConnectToVcam(true);
-        }
+        protected virtual void Awake() => ConnectToVcam(true);
+
+        /// <summary>Disconnect from virtual camera pipeline.
+        /// Override implementations must call this base implementation</summary>
+        protected virtual void OnDestroy() => ConnectToVcam(false);
 
         /// <summary>Does nothing.  It's here for the little checkbox in the inspector.</summary>
         protected virtual void OnEnable() {}
@@ -43,39 +57,30 @@ namespace Cinemachine
             var extensions = Resources.FindObjectsOfTypeAll<CinemachineExtension>();
             // Sort by execution order
             System.Array.Sort(extensions, (x, y) => 
-                UnityEditor.MonoImporter.GetExecutionOrder(UnityEditor.MonoScript.FromMonoBehaviour(x)) 
-                    - UnityEditor.MonoImporter.GetExecutionOrder(UnityEditor.MonoScript.FromMonoBehaviour(y)));
-            foreach (var e in extensions)
-                e.ConnectToVcam(true);
+                UnityEditor.MonoImporter.GetExecutionOrder(UnityEditor.MonoScript.FromMonoBehaviour(y)) 
+                    - UnityEditor.MonoImporter.GetExecutionOrder(UnityEditor.MonoScript.FromMonoBehaviour(x)));
+            for (int i = 0; i < extensions.Length; ++i)
+                extensions[i].ConnectToVcam(true);
         }
 #endif
-        /// <summary>Disconnect from virtual camera pipeline.
-        /// Override implementations must call this base implementation</summary>
-        protected virtual void OnDestroy()
-        {
-            ConnectToVcam(false);
-        }
-
-        internal void EnsureStarted() { ConnectToVcam(true); }
+        internal void EnsureStarted() => ConnectToVcam(true);
 
         /// <summary>Connect to virtual camera.  Implementation must be safe to be called
         /// redundantly.  Override implementations must call this base implementation</summary>
         /// <param name="connect">True if connecting, false if disconnecting</param>
         protected virtual void ConnectToVcam(bool connect)
         {
-            if (connect && VirtualCamera == null)
-                Debug.LogError("CinemachineExtension requires a Cinemachine Virtual Camera component");
-            if (VirtualCamera != null)
+            if (ComponentOwner != null)
             {
                 if (connect)
-                    VirtualCamera.AddExtension(this);
+                    ComponentOwner.AddExtension(this);
                 else
-                    VirtualCamera.RemoveExtension(this);
+                    ComponentOwner.RemoveExtension(this);
             }
-            mExtraState = null;
+            m_ExtraState = null;
         }
 
-        /// <summary>Override this to do such things as offset the RefereceLookAt.
+        /// <summary>Override this to do such things as offset the ReferenceLookAt.
         /// Base class implementation does nothing.</summary>
         /// <param name="vcam">The virtual camera being processed</param>
         /// <param name="curState">Input state that must be mutated</param>
@@ -111,18 +116,20 @@ namespace Cinemachine
 
         /// <summary>This is called to notify the extension that a target got warped,
         /// so that the extension can update its internal state to make the camera
-        /// also warp seamlessy.  Base class implementation does nothing.</summary>
+        /// also warp seamlessly.  Base class implementation does nothing.</summary>
+        /// <param name="vcam">Virtual camera to warp</param>
         /// <param name="target">The object that was warped</param>
         /// <param name="positionDelta">The amount the target's position changed</param>
-        public virtual void OnTargetObjectWarped(Transform target, Vector3 positionDelta) {}
+        public virtual void OnTargetObjectWarped(
+            CinemachineVirtualCameraBase vcam, Transform target, Vector3 positionDelta) {}
 
         /// <summary>
         /// Force the virtual camera to assume a given position and orientation
         /// </summary>
-        /// <param name="pos">Worldspace pposition to take</param>
-        /// <param name="rot">Worldspace orientation to take</param>
+        /// <param name="pos">World-space position to take</param>
+        /// <param name="rot">World-space orientation to take</param>
         public virtual void ForceCameraPosition(Vector3 pos, Quaternion rot) {}
-        
+
         /// <summary>Notification that this virtual camera is going live.
         /// Base class implementation must be called by any overridden method.</summary>
         /// <param name="fromCam">The camera being deactivated.  May be null.</param>
@@ -130,49 +137,43 @@ namespace Cinemachine
         /// <param name="deltaTime">Delta time for time-based effects (ignore if less than or equal to 0)</param>
         /// <returns>True to request a vcam update of internal state</returns>
         public virtual bool OnTransitionFromCamera(
-            ICinemachineCamera fromCam, Vector3 worldUp, float deltaTime) { return false; }
+            ICinemachineCamera fromCam, Vector3 worldUp, float deltaTime) => false;
 
         /// <summary>
         /// Report maximum damping time needed for this extension.
         /// Only used in editor for timeline scrubbing.
         /// </summary>
         /// <returns>Highest damping setting in this extension</returns>
-        public virtual float GetMaxDampTime() { return 0; }
+        public virtual float GetMaxDampTime() => 0;
         
-        /// <summary>Extensions that require user input should implement this and return true.</summary>
-        public virtual bool RequiresUserInput => false;
-
         /// <summary>Because extensions can be placed on manager cams and will in that
         /// case be called for all the vcam children, vcam-specific state information
         /// should be stored here.  Just define a class to hold your state info
         /// and use it exclusively when calling this.</summary>
-        /// /// <typeparam name="T">The type of the extra state class</typeparam>
+        /// <typeparam name="T">The type of the extra state class</typeparam>
         /// <param name="vcam">The virtual camera being processed</param>
         /// <returns>The extra state, cast as type T</returns>
-        protected T GetExtraState<T>(ICinemachineCamera vcam) where T : class, new()
+        protected T GetExtraState<T>(CinemachineVirtualCameraBase vcam) where T : VcamExtraStateBase, new()
         {
-            if (mExtraState == null)
-                mExtraState = new Dictionary<ICinemachineCamera, System.Object>();
-            System.Object extra = null;
-            if (!mExtraState.TryGetValue(vcam, out extra))
-                extra = mExtraState[vcam] = new T();
+            if (m_ExtraState == null)
+                m_ExtraState = new ();
+            if (!m_ExtraState.TryGetValue(vcam, out var extra))
+                extra = m_ExtraState[vcam] = new T { Vcam = vcam};
             return extra as T;
         }
 
-        /// <summary>Inefficient method to get all extra state info for all vcams.
-        /// Intended for Editor use only, not runtime!
-        /// </summary>
+        /// <summary>Get all extra state info for all vcams.</summary>
         /// <typeparam name="T">The extra state type</typeparam>
-        /// <returns>A dynamically-allocated list with all the extra states</returns>
-        protected List<T> GetAllExtraStates<T>() where T : class, new()
+        /// <param name="list">The list that will get populated with the extra states.</param>
+        protected void GetAllExtraStates<T>(List<T> list) where T : VcamExtraStateBase, new()
         {
-            var list = new List<T>();
-            if (mExtraState != null)
-                foreach (var v in mExtraState)
-                    list.Add(v.Value as T);
-            return list;
+            list.Clear();
+            if (m_ExtraState != null)
+            {
+                var iter = m_ExtraState.GetEnumerator();
+                while (iter.MoveNext())
+                    list.Add(iter.Current.Value as T);
+            }
         }
-
-        private Dictionary<ICinemachineCamera, System.Object> mExtraState;
     }
 }

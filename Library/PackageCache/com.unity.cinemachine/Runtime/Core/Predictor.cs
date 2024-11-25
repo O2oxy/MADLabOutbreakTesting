@@ -1,34 +1,36 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-namespace Cinemachine.Utility
+namespace Unity.Cinemachine
 {
     /// <summary>
-    /// This is a utility class to implement position predicting.
+    /// This is a utility to implement position predicting.
     /// </summary>
-    public class PositionPredictor
+    public struct PositionPredictor
     {
         Vector3 m_Velocity;
         Vector3 m_SmoothDampVelocity;
         Vector3 m_Pos;
         bool m_HavePos;
 
-        /// <summary>
-        /// How much to smooth the predicted result.  Must be >= 0, roughly coresponds to smoothing time.
-        /// </summary>
+        /// <summary>How much to smooth the predicted result.  Must be >= 0, roughly corresponds to smoothing time.</summary>
         public float Smoothing;
 
-        /// <summary>
-        /// Have any positions been logged for smoothing?
-        /// </summary>
-        /// <returns>True if no positions have yet been logged, in which case smoothing is impossible</returns>
-        public bool IsEmpty() { return !m_HavePos; }
+        /// <summary>Have any positions been logged for smoothing?</summary>
+        /// <value>True if no positions have yet been logged, in which case smoothing is impossible</value>
+        public bool IsEmpty => !m_HavePos;
+
+        /// <summary>Get the current position of the tracked object, as set by the last call to AddPosition().
+        /// This is only valid if IsEmpty returns false.</summary>
+        /// <value>The current position of the tracked object, as set by the last call to AddPosition()</value>
+        public Vector3 CurrentPosition => m_Pos;
 
         /// <summary>
         /// Apply a delta to the target's position, which will be ignored for 
-        /// smoothing purposes.  Use this whent he target's position gets warped.
+        /// smoothing purposes.  Use this when the target's position gets warped.
         /// </summary>
         /// <param name="positionDelta">The position change of the target object</param>
-        public void ApplyTransformDelta(Vector3 positionDelta) { m_Pos += positionDelta; }
+        public void ApplyTransformDelta(Vector3 positionDelta) => m_Pos += positionDelta;
 
         /// <summary>Reset the lookahead data, clear all the buffers.</summary>
         public void Reset() 
@@ -41,8 +43,7 @@ namespace Cinemachine.Utility
         /// <summary>Add a new target position to the history buffer</summary>
         /// <param name="pos">The new target position</param>
         /// <param name="deltaTime">deltaTime since the last target position was added</param>
-        /// <param name="lookaheadTime">Current lookahead time setting (unused)</param>
-        public void AddPosition(Vector3 pos, float deltaTime, float lookaheadTime)
+        public void AddPosition(Vector3 pos, float deltaTime)
         {
             if (deltaTime < 0)
                 Reset();
@@ -60,19 +61,8 @@ namespace Cinemachine.Utility
 
         /// <summary>Predict the target's position change over a given time from now</summary>
         /// <param name="lookaheadTime">How far ahead in time to predict</param>
-        /// <returns>The predicted position change (current velocity * lokahead time)</returns>
-        public Vector3 PredictPositionDelta(float lookaheadTime)
-        {
-            return m_Velocity * lookaheadTime;
-        }
-
-        /// <summary>Predict the target's position a given time from now</summary>
-        /// <param name="lookaheadTime">How far ahead in time to predict</param>
-        /// <returns>The predicted position</returns>
-        public Vector3 PredictPosition(float lookaheadTime)
-        {
-            return m_Pos + PredictPositionDelta(lookaheadTime);
-        }
+        /// <returns>The predicted position change (current velocity * lookahead time)</returns>
+        public Vector3 PredictPositionDelta(float lookaheadTime) => m_Velocity * lookaheadTime;
     }
 
     /// <summary>Utility to perform realistic damping of float or Vector3 values.
@@ -83,16 +73,11 @@ namespace Cinemachine.Utility
         const float Epsilon = UnityVectorExtensions.Epsilon;
 
         // Get the decay constant that would leave a given residual after a given time
-        static float DecayConstant(float time, float residual)
-        {
-            return Mathf.Log(1f / residual) / time;
-        }
+        static float DecayConstant(float time, float residual) => Mathf.Log(1f / residual) / time;
 
-        // Exponential decay: decay a given quantity opver a period of time
-        static float DecayedRemainder(float initial, float decayConstant, float deltaTime)
-        {
-            return initial / Mathf.Exp(decayConstant * deltaTime);
-        }
+        // Exponential decay: decay a given quantity over a period of time
+        static float DecayedRemainder(float initial, float decayConstant, float deltaTime) 
+            => initial / Mathf.Exp(decayConstant * deltaTime);
 
         /// <summary>Standard residual</summary>
         public const float kNegligibleResidual = 0.01f;
@@ -108,44 +93,11 @@ namespace Cinemachine.Utility
         /// a value between 0 and 1.</returns>
         public static float Damp(float initial, float dampTime, float deltaTime)
         {
-            if (dampTime < Epsilon || Mathf.Abs(initial) < Epsilon)
-                return initial;
-            if (deltaTime < Epsilon)
-                return 0;
-            float k = -kLogNegligibleResidual / dampTime; //DecayConstant(dampTime, kNegligibleResidual);
-
 #if CINEMACHINE_EXPERIMENTAL_DAMPING
-            // Try to reduce damage caused by frametime variability
-            float step = Time.fixedDeltaTime;
-            if (deltaTime != step)
-                step /= 5;
-            int numSteps = Mathf.FloorToInt(deltaTime / step);
-            float vel = initial * step / deltaTime;
-            float decayConstant = Mathf.Exp(-k * step);
-
-            // ====================================
-            // This code is equivalent to:
-            //     float r = 0;
-            //     for (int i = 0; i < numSteps; ++i)
-            //         r = (r + vel) * decayConstant;
-            // (partial sum of geometric series)
-            float r = vel;
-            if (Mathf.Abs(decayConstant - 1) < Epsilon)
-                r *= decayConstant * numSteps;
-            else
-            {
-                r *= decayConstant - Mathf.Pow(decayConstant, numSteps + 1);
-                r /= 1 - decayConstant;
-            }
-            // ====================================
-
-            float d = deltaTime - (step * numSteps);
-            if (d > Epsilon)
-                r = Mathf.Lerp(r, (r + vel) * decayConstant, d / step);
-            return initial - r;
-#else
-            return initial * (1 - Mathf.Exp(-k * deltaTime));
+            if (!Time.inFixedTimeStep)
+                return StableDamp(initial, dampTime, deltaTime);
 #endif
+            return StandardDamp(initial, dampTime, deltaTime);
         }
 
         /// <summary>Get a damped version of a quantity.  This is the portion of the
@@ -177,128 +129,161 @@ namespace Cinemachine.Utility
                 initial[i] = Damp(initial[i], dampTime, deltaTime);
             return initial;
         }
-    }
 
-    /// <summary>Tracks an object's velocity with a filter to determine a reasonably
-    /// steady direction for the object's current trajectory.</summary>
-    public class HeadingTracker
-    {
-        struct Item
+        /// <summary>Get a damped version of a quantity.  This is the portion of the
+        /// quantity that will take effect over the given time.</summary>
+        /// <param name="initial">The amount that will be damped</param>
+        /// <param name="dampTime">The rate of damping.  This is the time it would
+        /// take to reduce the original amount to a negligible percentage</param>
+        /// <param name="deltaTime">The time over which to damp</param>
+        /// <returns>The damped amount.  This will be the original amount scaled by
+        /// a value between 0 and 1.</returns>
+        // Internal for testing
+        internal static float StandardDamp(float initial, float dampTime, float deltaTime)
         {
-            public Vector3 velocity;
-            public float weight;
-            public float time;
-        };
-        Item[] mHistory;
-        int mTop;
-        int mBottom;
-        int mCount;
-
-        Vector3 mHeadingSum;
-        float mWeightSum = 0;
-        float mWeightTime = 0;
-
-        Vector3 mLastGoodHeading = Vector3.zero;
-
-        /// <summary>Construct a heading tracker with a given filter size</summary>
-        /// <param name="filterSize">The size of the filter.  The larger the filter, the
-        /// more constanct (and laggy) is the heading.  30 is pretty big.</param>
-        public HeadingTracker(int filterSize)
-        {
-            mHistory = new Item[filterSize];
-            float historyHalfLife = filterSize / 5f; // somewhat arbitrarily
-            mDecayExponent = -Mathf.Log(2f) / historyHalfLife;
-            ClearHistory();
+            if (dampTime < Epsilon || Mathf.Abs(initial) < Epsilon)
+                return initial;
+            if (deltaTime < Epsilon)
+                return 0;
+            return initial * (1 - Mathf.Exp(kLogNegligibleResidual * deltaTime / dampTime));
         }
 
-        /// <summary>Get the current filter size</summary>
-        public int FilterSize { get { return mHistory.Length; } }
-
-        void ClearHistory()
+        /// <summary>
+        /// Get a damped version of a quantity.  This is the portion of the
+        /// quantity that will take effect over the given time.
+        /// 
+        /// This is a special implementation that attempts to increase visual stability 
+        /// in the context of an unstable framerate.
+        /// 
+        /// It relies on AverageFrameRateTracker to track the average framerate.
+        /// </summary>
+        /// <param name="initial">The amount that will be damped</param>
+        /// <param name="dampTime">The rate of damping.  This is the time it would
+        /// take to reduce the original amount to a negligible percentage</param>
+        /// <param name="deltaTime">The time over which to damp</param>
+        /// <returns>The damped amount.  This will be the original amount scaled by
+        /// a value between 0 and 1.</returns>
+        // Internal for testing
+        internal static float StableDamp(float initial, float dampTime, float deltaTime)
         {
-            mTop = mBottom = mCount = 0;
-            mWeightSum = 0;
-            mHeadingSum = Vector3.zero;
-        }
+            if (dampTime < Epsilon || Mathf.Abs(initial) < Epsilon)
+                return initial;
+            if (deltaTime < Epsilon)
+                return 0;
 
-        static float mDecayExponent;
-        static float Decay(float time) { return Mathf.Exp(time * mDecayExponent); }
+            // Try to reduce damage caused by frametime variability, by pretending
+            // that the value to decay has accumulated steadily over many constant-time subframes.
+            // We simulate being called for each subframe.  This does result in a longer damping time,
+            // so we compensate with AverageFrameRateTracker.DampTimeScale, which is calculated
+            // every frame based on the average framerate over the past number of frames.
+            float step = Mathf.Min(deltaTime, AverageFrameRateTracker.kSubframeTime);
+            int numSteps = Mathf.FloorToInt(deltaTime / step);
+            float vel = initial * step / deltaTime; // the amount that accumulates each subframe
+            float k = Mathf.Exp(kLogNegligibleResidual * AverageFrameRateTracker.DampTimeScale * step / dampTime);
 
-        /// <summary>Add a new velocity frame.  This should be called once per frame,
-        /// unless the velocity is zero</summary>
-        /// <param name="velocity">The object's velocity this frame</param>
-        public void Add(Vector3 velocity)
-        {
-            if (FilterSize == 0)
-            {
-                mLastGoodHeading = velocity;
-                return;
-            }
-            float weight = velocity.magnitude;
-            if (weight > UnityVectorExtensions.Epsilon)
-            {
-                Item item = new Item();
-                item.velocity = velocity;
-                item.weight = weight;
-                item.time = CinemachineCore.CurrentTime;
-                if (mCount == FilterSize)
-                    PopBottom();
-                ++mCount;
-                mHistory[mTop] = item;
-                if (++mTop == FilterSize)
-                    mTop = 0;
-
-                mWeightSum *= Decay(item.time - mWeightTime);
-                mWeightTime = item.time;
-                mWeightSum += weight;
-                mHeadingSum += item.velocity;
-            }
-        }
-
-        void PopBottom()
-        {
-            if (mCount > 0)
-            {
-                float time = CinemachineCore.CurrentTime;
-                Item item = mHistory[mBottom];
-                if (++mBottom == FilterSize)
-                    mBottom = 0;
-                --mCount;
-
-                float decay = Decay(time - item.time);
-                mWeightSum -= item.weight * decay;
-                mHeadingSum -= item.velocity * decay;
-                if (mWeightSum <= UnityVectorExtensions.Epsilon || mCount == 0)
-                    ClearHistory();
-            }
-        }
-
-        /// <summary>Decay the history.  This should be called every frame.</summary>
-        public void DecayHistory()
-        {
-            float time = CinemachineCore.CurrentTime;
-            float decay = Decay(time - mWeightTime);
-            mWeightSum *= decay;
-            mWeightTime = time;
-            if (mWeightSum < UnityVectorExtensions.Epsilon)
-                ClearHistory();
+            // ====================================
+            // This code is equivalent to:
+            //     float r = 0;
+            //     for (int i = 0; i < numSteps; ++i)
+            //         r = (r + vel) * k;
+            // (partial sum of geometric series)
+            float r = vel;
+            if (Mathf.Abs(k - 1) < Epsilon)
+                r *= k * numSteps;
             else
-                mHeadingSum = mHeadingSum * decay;
+            {
+                r *= k - Mathf.Pow(k, numSteps + 1);
+                r /= 1 - k;
+            }
+            // ====================================
+
+            // Handle any remaining quantity after the last step
+            r = Mathf.Lerp(r, (r + vel) * k, (deltaTime - (step * numSteps)) / step);
+
+            return initial - r;
         }
 
-        /// <summary>Get the filtered heading.</summary>
-        /// <returns>The filtered direction of motion</returns>
-        public Vector3 GetReliableHeading()
+#if UNITY_EDITOR
+        [UnityEditor.InitializeOnLoad]
+#endif
+        // Internal for testing.
+        // This class keeps a running calculation of the average framerate over a fixed
+        // time window.  Used to smooth out framerate fluctuations for determining the
+        // correct damping constant.
+        internal static class AverageFrameRateTracker
         {
-            // Update Last Good Heading
-            if (mWeightSum > UnityVectorExtensions.Epsilon
-                && (mCount == mHistory.Length || mLastGoodHeading.AlmostZero()))
+            const int kBufferSize = 100;
+
+            static float[] s_Buffer = new float[kBufferSize];
+            static int s_NumItems = 0;
+            static int s_Head = 0;
+            static float s_Sum = 0;
+
+            public const float kSubframeTime = 1.0f / 1024.0f; // Do not change this without also changing SetDampTimeScale()
+
+            public static float FPS { get; private set; }
+            public static float DampTimeScale { get; private set; }
+
+#if UNITY_EDITOR
+            static AverageFrameRateTracker() => Reset();
+#endif
+
+            [RuntimeInitializeOnLoadMethod]
+            static void Initialize()
             {
-                Vector3  h = mHeadingSum / mWeightSum;
-                if (!h.AlmostZero())
-                    mLastGoodHeading = h.normalized;
+#if CINEMACHINE_EXPERIMENTAL_DAMPING
+                // GML TODO: use a different hook
+                Application.onBeforeRender -= Append;
+                Application.onBeforeRender += Append;
+
+                SceneManager.sceneLoaded -= OnSceneLoaded;
+                SceneManager.sceneLoaded += OnSceneLoaded;
+#endif
+                Reset();
             }
-            return mLastGoodHeading;
+
+            static void OnSceneLoaded(Scene scene, LoadSceneMode mode) => Reset();
+
+            // Internal for testing
+            internal static void Reset()
+            {
+                s_NumItems = 0;
+                s_Head = 0;
+                s_Sum = 0;
+                FPS = 60;
+                SetDampTimeScale(FPS);
+            }
+
+            static void Append()
+            {
+#if UNITY_EDITOR
+                if (!Application.isPlaying)
+                {
+                    Reset();
+                    return;
+                }
+#endif
+                var dt = Time.unscaledDeltaTime;
+                if (++s_Head == kBufferSize)
+                    s_Head = 0;
+                if (s_NumItems == kBufferSize)
+                    s_Sum -= s_Buffer[s_Head];
+                else
+                    ++s_NumItems;
+                s_Sum += dt;
+                s_Buffer[s_Head] = dt;
+
+                FPS = s_NumItems / s_Sum;
+                SetDampTimeScale(FPS);
+            }
+
+            // Internal for testing
+            internal static void SetDampTimeScale(float fps) 
+            {
+                // Approximation computed heuristically, and curve-fitted to sampled data.
+                // Valid only for kSubframeTime = 1.0f / 1024.0f
+                DampTimeScale = 2.0f - 1.81e-3f * fps + 7.9e-07f * fps * fps;
+            }
         }
     }
 }

@@ -1,27 +1,22 @@
-#if !UNITY_2019_1_OR_NEWER
-#define CINEMACHINE_TIMELINE
-#endif
 #if CINEMACHINE_TIMELINE
 
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
-using Cinemachine;
 
-//namespace Cinemachine.Timeline
-//{
+namespace Unity.Cinemachine
+{
     /// <summary>
     /// Internal use only.  Not part of the public API.
     /// </summary>
     public sealed class CinemachineShot : PlayableAsset, IPropertyPreview
     {
-        /// <summary>The name to display on the track</summary>
-#if !UNITY_2019_2_OR_NEWER
-        [HideInInspector]
-#endif
+        /// <summary>The name to display on the track.  If empty, the CmCamera's name will be used.</summary>
+        [Tooltip("The name to display on the track.  If empty, the CmCamera's name will be used.")]
         public string DisplayName;
 
-        /// <summary>The virtual camera to activate</summary>
+        /// <summary>The Cinemachine camera to use for this shot</summary>
+        [Tooltip("The Cinemachine camera to use for this shot")]
         public ExposedReference<CinemachineVirtualCameraBase> VirtualCamera;
 
         /// <summary>PlayableAsset implementation</summary>
@@ -53,5 +48,5 @@ using Cinemachine;
             driver.AddFromName<Camera>("far clip plane");
         }
     }
-//}
+}
 #endif

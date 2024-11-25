@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+#if UNITY_2023_2_OR_NEWER
+using UnityEngine.Analytics;
+#endif
 
-namespace Cinemachine.Editor
+namespace Unity.Cinemachine.Editor
 {
     [InitializeOnLoad]
     static class CinemachineEditorAnalytics
@@ -11,13 +14,38 @@ namespace Cinemachine.Editor
         const int k_MaxEventsPerHour = 360;
         const int k_MaxNumberOfElements = 1000;
         const string k_VendorKey = "unity.cinemachine";
-        
+        const string k_CreateVcamEventName = "cm_create_vcam";
+        const string k_VcamsOnPlayEventName = "cm_vcams_on_play";
+
         // register an event handler when the class is initialized
         static CinemachineEditorAnalytics()
         {
             EditorApplication.playModeStateChanged += SendAnalyticsOnPlayEnter;
         }
 
+#if UNITY_2023_2_OR_NEWER
+        [AnalyticInfo(eventName: k_CreateVcamEventName, vendorKey: k_VendorKey, 
+            maxEventsPerHour:k_MaxEventsPerHour, maxNumberOfElements:k_MaxNumberOfElements)]
+        class CreateEventAnalytic : IAnalytic
+        {
+            public string vcam_created; // vcam created from Create -> Cinemachine menu
+
+            public bool TryGatherData(out IAnalytic.IData data, out Exception error)
+            {
+                error = null;
+                data = new CreateEventData { vcam_created = vcam_created};
+                return true;
+            }
+        }
+
+        [Serializable] class CreateEventData : IAnalytic.IData
+#else
+        struct CreateEventData
+#endif
+        {
+            public string vcam_created; // vcam created from Create -> Cinemachine menu
+        }
+        
         /// <summary>
         /// Send analytics event when using Create -> Cinemachine menu
         /// </summary>
@@ -27,23 +55,54 @@ namespace Cinemachine.Editor
             if (!EditorAnalytics.enabled)
                 return;
 
-            var data = new CreateEventData
-            {
-                vcam_created = name,
-            };
+#if UNITY_2023_2_OR_NEWER
+            EditorAnalytics.SendAnalytic(new CreateEventAnalytic { vcam_created = name });
+#else
+            var data = new CreateEventData { vcam_created = name };
 
             // Register our event
-            EditorAnalytics.RegisterEventWithLimit("cm_create_vcam", 
+            EditorAnalytics.RegisterEventWithLimit(k_CreateVcamEventName, 
                 k_MaxEventsPerHour, k_MaxNumberOfElements, k_VendorKey);
 
             // Send the data to the database
-            EditorAnalytics.SendEventWithLimit("cm_create_vcam", data);
+            EditorAnalytics.SendEventWithLimit(k_CreateVcamEventName, data);
+#endif
         }
 
-        struct CreateEventData
+#if UNITY_2023_2_OR_NEWER
+        [AnalyticInfo(eventName: k_VcamsOnPlayEventName, vendorKey: k_VendorKey, 
+            maxEventsPerHour:k_MaxEventsPerHour, maxNumberOfElements:k_MaxNumberOfElements)]
+        class PlayModeEventAnalytic : IAnalytic
         {
-            public string vcam_created; // vcam created from Create -> Cinemachine menu
+            public bool TryGatherData(out IAnalytic.IData data, out Exception error)
+            {
+                error = null;
+                var projectData = new ProjectData();
+                CollectOnPlayEnterData(ref projectData);
+                data = projectData;
+                return true;
+            }
         }
+        [Serializable]
+        class ProjectData : IAnalytic.IData
+        {
+            public int brain_count;
+            public int vcam_count;
+            public int cam_count;
+            public VcamData[] vcams;
+            public float time_elapsed;
+        }
+#else
+        [Serializable]
+        struct ProjectData
+        {
+            public int brain_count;
+            public int vcam_count;
+            public int cam_count;
+            public List<VcamData> vcams;
+            public float time_elapsed;
+        }
+#endif
 
         /// <summary>
         /// Send analytics event when using entering playmode
@@ -59,91 +118,73 @@ namespace Cinemachine.Editor
             if (state != PlayModeStateChange.EnteredPlayMode)
                 return;
 
-            var startTime = Time.realtimeSinceStartup;
+#if UNITY_2023_2_OR_NEWER
+            EditorAnalytics.SendAnalytic(new PlayModeEventAnalytic());
+#else
+            var projectData = new ProjectData();
+            CollectOnPlayEnterData(ref projectData);
 
-            var cinemachineCore = CinemachineCore.Instance;
-            var vcamCount = cinemachineCore.VirtualCameraCount;
+            // Register our event
+            EditorAnalytics.RegisterEventWithLimit(k_VcamsOnPlayEventName, 
+                k_MaxEventsPerHour, k_MaxNumberOfElements, k_VendorKey);
+            
+            // Send the data to the database
+            EditorAnalytics.SendEventWithLimit(k_VcamsOnPlayEventName, projectData);
+#endif
+        }
+
+        
+        /// <summary>
+        /// Send analytics event when using entering playmode
+        /// </summary>
+        /// <param name="state">State change to detect entering playmode</param>
+        static void CollectOnPlayEnterData(ref ProjectData projectData)
+        {
+            var startTime = Time.realtimeSinceStartup;
+            var vcamCount = CinemachineCore.VirtualCameraCount;
             var vcamDatas = new List<VcamData>();
 
             // collect data from all vcams
             for (int i = 0; i < vcamCount; ++i)
             {
-                var vcamBase = cinemachineCore.GetVirtualCamera(i);
-                CollectData(vcamBase, i.ToString(), ref vcamDatas);
+                var vcamBase = CinemachineCore.GetVirtualCamera(i);
+                CollectVcamData(vcamBase, i.ToString(), ref vcamDatas);
             }
 
-            var projectData = new ProjectData
-            {
-                brain_count = cinemachineCore.BrainCount,
-                vcam_count = cinemachineCore.VirtualCameraCount,
-                cam_count = Camera.allCamerasCount,
-                vcams = vcamDatas,
-                time_elapsed = Time.realtimeSinceStartup - startTime,
-            };
-
-            // Register our event
-            EditorAnalytics.RegisterEventWithLimit("cm_vcams_on_play", 
-                k_MaxEventsPerHour, k_MaxNumberOfElements, k_VendorKey);
-            
-            // Send the data to the database
-            EditorAnalytics.SendEventWithLimit("cm_vcams_on_play", projectData);
+            projectData.brain_count = CinemachineBrain.ActiveBrainCount;
+            projectData.vcam_count = CinemachineCore.VirtualCameraCount;
+            projectData.cam_count = Camera.allCamerasCount;
+#if UNITY_2023_2_OR_NEWER
+            projectData.vcams = vcamDatas.ToArray();
+#else
+            projectData.vcams = vcamDatas;
+#endif
+            projectData.time_elapsed = Time.realtimeSinceStartup - startTime;
         }
 
-        static void CollectData(CinemachineVirtualCameraBase vcamBase, string id, ref List<VcamData> vcamDatas)
+        static void CollectVcamData(CinemachineVirtualCameraBase vcamBase, string id, ref List<VcamData> vcamDatas)
         {
-            if (vcamBase == null) return;
+            if (vcamBase == null) 
+                return;
             
             var vcamData = new VcamData(id, vcamBase);
             
             // VirtualCamera
-            var vcam = vcamBase as CinemachineVirtualCamera;
+            var vcam = vcamBase as CinemachineCamera;
             if (vcam != null)
             {
-                vcamData.SetTransitionsAndLens(vcam.m_Transitions, vcam.m_Lens);
-                vcamData.SetComponents(vcam.GetComponentPipeline());
-                
+                vcamData.SetTransitionsAndLens(vcam.BlendHint, vcam.Lens);
+                vcamData.SetComponents(vcam.GetComponents<CinemachineComponentBase>());
                 vcamDatas.Add(vcamData);
                 return;
             }     
-            
-#if CINEMACHINE_EXPERIMENTAL_VCAM
-            // NewVirtualCamera or NewFreeLook
-            var vcamNew = vcamBase as CinemachineNewVirtualCamera;
-            if (vcamNew != null)
-            {
-                vcamData.SetTransitionsAndLens(vcamNew.m_Transitions, vcamNew.m_Lens);
-                vcamData.SetComponents(vcamNew.ComponentCache);
-                
-                vcamDatas.Add(vcamData);
-                return;
-            }
-#endif
-            
-            // Composite vcam (Freelook, Mixing, StateDriven, ClearShot...):
-            var freeLook = vcamBase as CinemachineFreeLook;
-            if (freeLook != null)
-            {
-                vcamData.SetTransitionsAndLens(freeLook.m_Transitions, freeLook.m_Lens);
-            }
-            vcamDatas.Add(vcamData);
 
-            var vcamChildren = 
-                vcamBase.GetComponentsInChildren<CinemachineVirtualCameraBase>();
+            var vcamChildren = vcamBase.GetComponentsInChildren<CinemachineVirtualCameraBase>();
             for (var c = 1; c < vcamChildren.Length; c++)
             {
-                if ((CinemachineVirtualCameraBase)vcamChildren[c].ParentCamera == vcamBase)
-                    CollectData(vcamChildren[c], id + "." + c, ref vcamDatas);
+                if (vcamChildren[c].ParentCamera == (ICinemachineCamera)vcamBase)
+                    CollectVcamData(vcamChildren[c], id + "." + c, ref vcamDatas);
             }
-        }
-
-        [Serializable]
-        struct ProjectData
-        {
-            public int brain_count;
-            public int vcam_count;
-            public int cam_count;
-            public List<VcamData> vcams;
-            public float time_elapsed;
         }
 
         [Serializable]
@@ -174,14 +215,14 @@ namespace Cinemachine.Editor
                 has_lookat_target = vcamBase.LookAt != null;
                 blend_hint = "";
                 inherit_position = false;
-                standby_update = vcamBase.m_StandbyUpdate.ToString();
+                standby_update = vcamBase.StandbyUpdate.ToString();
                 mode_overwrite = "";
                 body_component = "";
                 aim_component = "";
                 noise_component = "";
                 custom_component_count = 0;
                 custom_extension_count = 0;
-                var vcamExtensions = vcamBase.mExtensions;
+                var vcamExtensions = vcamBase.Extensions;
                 if (vcamExtensions != null)
                 {
                     extensions = new string[vcamExtensions.Count];
@@ -196,11 +237,10 @@ namespace Cinemachine.Editor
                 }
             }
             
-            public void SetTransitionsAndLens(
-                CinemachineVirtualCameraBase.TransitionParams transitions, LensSettings lens)
+            public void SetTransitionsAndLens(CinemachineCore.BlendHints hints, LensSettings lens)
             {
-                blend_hint = transitions.m_BlendHint.ToString();
-                inherit_position = transitions.m_InheritPosition;
+                blend_hint = hints.ToString();
+                inherit_position = (hints & CinemachineCore.BlendHints.InheritPosition) != 0;
                 mode_overwrite = lens.ModeOverride.ToString();
             }
 
@@ -212,9 +252,8 @@ namespace Cinemachine.Editor
                 {
                     for (var i = 0; i < cmComps.Length; i++)
                     {
-#if CINEMACHINE_EXPERIMENTAL_VCAM
-                        if (cmComps[i] == null) continue;
-#endif
+                        if (cmComps[i] == null) 
+                            continue;
                         var componentName = GetTypeName(cmComps[i].GetType(), ref custom_component_count);
                         switch (cmComps[i].Stage)
                         {

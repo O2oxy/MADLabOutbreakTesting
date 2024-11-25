@@ -1,161 +1,126 @@
 using UnityEngine;
 using UnityEditor;
-using UnityEditorInternal;
 using System.Collections.Generic;
+using UnityEngine.UIElements;
+using UnityEditor.UIElements;
+using System;
 
-namespace Cinemachine.Editor
+namespace Unity.Cinemachine.Editor
 {
     [CustomEditor(typeof(CinemachineBlenderSettings))]
-    internal sealed class CinemachineBlenderSettingsEditor : BaseEditor<CinemachineBlenderSettings>
+    class CinemachineBlenderSettingsEditor : UnityEditor.Editor
     {
-        private ReorderableList mBlendList;
+        CinemachineBlenderSettings Target => target as CinemachineBlenderSettings;
 
         /// <summary>
         /// Called when building the Camera popup menus, to get the domain of possible
-        /// cameras.  If no delegate is set, will find all top-level (non-slave)
-        /// virtual cameras in the scene.
+        /// cameras.  If no delegate is set, will find all top-level virtual cameras in the scene,
+        /// i.e. vcams that are not feeding a specific mixer.
         /// </summary>
-        public GetAllVirtualCamerasDelegate GetAllVirtualCameras;
-        public delegate CinemachineVirtualCameraBase[] GetAllVirtualCamerasDelegate();
+        public GetAllVirtualCamerasDelegate GetAllVirtualCameras = GetToplevelCameras;
+        public delegate void GetAllVirtualCamerasDelegate(List<CinemachineVirtualCameraBase> list);
 
-        /// <summary>Get the property names to exclude in the inspector.</summary>
-        /// <param name="excluded">Add the names to this list</param>
-        protected override void GetExcludedPropertiesInInspector(List<string> excluded)
+        // Get all top-level virtual cameras
+        static void GetToplevelCameras(List<CinemachineVirtualCameraBase> list)
         {
-            base.GetExcludedPropertiesInInspector(excluded);
-            excluded.Add(FieldPath(x => x.m_CustomBlends));
+            var candidates = Resources.FindObjectsOfTypeAll<CinemachineVirtualCameraBase>();
+            for (var i = 0; i < candidates.Length; ++i)
+                if (candidates[i].ParentCamera == null)
+                    list.Add(candidates[i]);
         }
 
-        public override void OnInspectorGUI()
+        public override VisualElement CreateInspectorGUI()
         {
-            BeginInspector();
-            if (mBlendList == null)
-                SetupBlendList();
+            var ux = new VisualElement();
 
-            DrawRemainingPropertiesInInspector();
+            var header = ux.AddChild(new VisualElement { style = { flexDirection = FlexDirection.Row, marginBottom = -2 } });
+            FormatElement(true,
+                header.AddChild(new Label("From")), 
+                header.AddChild(new Label("To")), 
+                header.AddChild(new Label("Blend")));
+            header.AddToClassList("unity-collection-view--with-border");
 
-            UpdateCameraCandidates();
-            mBlendList.DoLayoutList();
-            serializedObject.ApplyModifiedProperties();
-        }
-
-        private const string kNoneLabel = "(none)";
-        private string[] mCameraCandidates;
-        private Dictionary<string, int> mCameraIndexLookup;
-        private void UpdateCameraCandidates()
-        {
-            List<string> vcams = new List<string>();
-            mCameraIndexLookup = new Dictionary<string, int>();
-
-            CinemachineVirtualCameraBase[] candidates;
-            if (GetAllVirtualCameras != null)
-                candidates = GetAllVirtualCameras();
-            else
+            var list = ux.AddChild(new ListView()
             {
-                // Get all top-level (i.e. non-slave) virtual cameras
-                candidates = Resources.FindObjectsOfTypeAll(
-                        typeof(CinemachineVirtualCameraBase)) as CinemachineVirtualCameraBase[];
+                reorderable = true,
+                reorderMode = ListViewReorderMode.Animated,
+                showAddRemoveFooter = true,
+                showBorder = true,
+                showBoundCollectionSize = false,
+                showFoldoutHeader = false,
+                style = { borderTopWidth = 0, marginLeft = 0 },
+            });
+            var elements = serializedObject.FindProperty(() => Target.CustomBlends);
+            list.BindProperty(elements);
 
-                for (int i = 0; i < candidates.Length; ++i)
-                    if (candidates[i].ParentCamera != null)
-                        candidates[i] = null;
+            // Gather the camera candidates
+            var availableCameras = new List<string>();
+            Dictionary<string, int> cameraIndexLookup = new();
+            Action onCamerasUpdated = null;
+            list.TrackAnyUserActivity(() =>
+            {
+                var allCameras = new List<CinemachineVirtualCameraBase>();
+                GetAllVirtualCameras(allCameras);
+                availableCameras.Clear();
+                availableCameras.Add(string.Empty);
+                availableCameras.Add(CinemachineBlenderSettings.kBlendFromAnyCameraLabel);
+                for (int i = 0; i < allCameras.Count; ++i)
+                    if (allCameras[i] != null && !availableCameras.Contains(allCameras[i].Name))
+                        availableCameras.Add(allCameras[i].Name);
+                onCamerasUpdated?.Invoke();
+            });
+
+            list.makeItem = () => 
+            {
+                var def = new CinemachineBlenderSettings.CustomBlend();
+                var row = new BindableElement { style = { flexDirection = FlexDirection.Row }};
+                var from = row.AddChild(CreateCameraPopup(SerializedPropertyHelper.PropertyName(() => def.From)));
+                var to = row.AddChild(CreateCameraPopup(SerializedPropertyHelper.PropertyName(() => def.To)));
+                var blend = row.AddChild(new PropertyField(null, "") { bindingPath = SerializedPropertyHelper.PropertyName(() => def.Blend)});
+                FormatElement(false, from, to, blend);
+                return row;
+
+                // Local function
+                VisualElement CreateCameraPopup(string bindingPath)
+                {
+                    var container = new VisualElement { style = { flexDirection = FlexDirection.Row, flexGrow = 1 }};
+                    var textField = container.AddChild(new TextField { bindingPath = bindingPath, isDelayed = true, style = { flexGrow = 1, flexBasis = 20 }});
+
+                    var warning = container.AddChild(InspectorUtility.MiniHelpIcon($"No in-scene camera matches this name"));
+                    textField.RegisterValueChangedCallback((evt) => OnCameraUpdated());
+                    onCamerasUpdated += OnCameraUpdated;
+                    void OnCameraUpdated()
+                    {
+                        warning.tooltip = $"No in-scene camera matches \"{textField.value}\"";
+                        warning.SetVisible(availableCameras.FindIndex(x => x == textField.value) < 0);
+                    };
+
+                    var popup = container.AddChild(InspectorUtility.MiniDropdownButton(
+                        "Choose from currently-available cameras", new ContextualMenuManipulator((evt) => 
+                    {
+                        for (int i = 0; i < availableCameras.Count; ++i)
+                            evt.menu.AppendAction(availableCameras[i], (action) => textField.value = action.name);
+                    })));
+                    popup.style.marginRight = 5;
+                    return container;
+                }
+            };
+
+            return ux;
+
+            // Local function
+            static void FormatElement(bool isHeader, VisualElement e1, VisualElement e2, VisualElement e3)
+            {
+                e1.style.marginLeft = isHeader ? 2 * InspectorUtility.SingleLineHeight - 3: 0;
+                e1.style.flexBasis = InspectorUtility.SingleLineHeight; 
+                e1.style.flexGrow = 3;
+                
+                e2.style.flexBasis = 1; 
+                e2.style.flexGrow = 3;
+
+                e3.style.flexBasis = 1; 
+                e3.style.flexGrow = 2;
             }
-            vcams.Add(kNoneLabel);
-            vcams.Add(CinemachineBlenderSettings.kBlendFromAnyCameraLabel);
-            foreach (CinemachineVirtualCameraBase c in candidates)
-                if (c != null && !vcams.Contains(c.Name))
-                    vcams.Add(c.Name);
-
-            mCameraCandidates = vcams.ToArray();
-            for (int i = 0; i < mCameraCandidates.Length; ++i)
-                mCameraIndexLookup[mCameraCandidates[i]] = i;
-        }
-
-        private int GetCameraIndex(string name)
-        {
-            if (name == null || mCameraIndexLookup == null)
-                return 0;
-            if (!mCameraIndexLookup.ContainsKey(name))
-                return 0;
-            return mCameraIndexLookup[name];
-        }
-
-        void DrawVcamSelector(Rect r, SerializedProperty prop)
-        {
-            r.width -= EditorGUIUtility.singleLineHeight;
-            int current = GetCameraIndex(prop.stringValue);
-            var oldColor = GUI.color;
-            if (current == 0)
-                GUI.color = new Color(1, 193.0f/255.0f, 7.0f/255.0f); // the "warning" icon color
-            EditorGUI.PropertyField(r, prop, GUIContent.none);
-            r.x += r.width; r.width = EditorGUIUtility.singleLineHeight;
-            int sel = EditorGUI.Popup(r, current, mCameraCandidates);
-            if (current != sel)
-                prop.stringValue = (mCameraCandidates[sel] == kNoneLabel) 
-                    ? string.Empty : mCameraCandidates[sel];
-            GUI.color = oldColor;
-        }
-        
-        void SetupBlendList()
-        {
-            mBlendList = new ReorderableList(serializedObject,
-                    serializedObject.FindProperty(() => Target.m_CustomBlends),
-                    true, true, true, true);
-
-            // Needed for accessing string names of fields
-            CinemachineBlenderSettings.CustomBlend def = new CinemachineBlenderSettings.CustomBlend();
-            CinemachineBlendDefinition def2 = new CinemachineBlendDefinition();
-
-            float vSpace = 2;
-            float hSpace = 3;
-            float floatFieldWidth = EditorGUIUtility.singleLineHeight * 2.5f;
-            mBlendList.drawHeaderCallback = (Rect rect) =>
-                {
-                    rect.width -= (EditorGUIUtility.singleLineHeight + 2 * hSpace);
-                    rect.width /= 3;
-                    rect.x += EditorGUIUtility.singleLineHeight;
-                    EditorGUI.LabelField(rect, "From");
-
-                    rect.x += rect.width + hSpace;
-                    EditorGUI.LabelField(rect, "To");
-
-                    rect.x += rect.width + hSpace; rect.width -= floatFieldWidth + hSpace;
-                    EditorGUI.LabelField(rect, "Style");
-
-                    rect.x += rect.width + hSpace; rect.width = floatFieldWidth;
-                    EditorGUI.LabelField(rect, "Time");
-                };
-
-            mBlendList.drawElementCallback
-                = (Rect rect, int index, bool isActive, bool isFocused) =>
-                {
-                    SerializedProperty element
-                        = mBlendList.serializedProperty.GetArrayElementAtIndex(index);
-
-                    rect.y += vSpace;
-                    rect.height = EditorGUIUtility.singleLineHeight;
-                    rect.width -= 2 * hSpace; rect.width /= 3;
-                    DrawVcamSelector(rect, element.FindPropertyRelative(() => def.m_From));
-
-                    rect.x += rect.width + hSpace;
-                    DrawVcamSelector(rect, element.FindPropertyRelative(() => def.m_To));
-
-                    SerializedProperty blendProp = element.FindPropertyRelative(() => def.m_Blend);
-                    rect.x += rect.width + hSpace;
-                    EditorGUI.PropertyField(rect, blendProp, GUIContent.none);
-                };
-
-            mBlendList.onAddCallback = (ReorderableList l) =>
-                {
-                    var index = l.serializedProperty.arraySize;
-                    ++l.serializedProperty.arraySize;
-                    SerializedProperty blendProp = l.serializedProperty.GetArrayElementAtIndex(
-                            index).FindPropertyRelative(() => def.m_Blend);
-
-                    blendProp.FindPropertyRelative(() => def2.m_Style).enumValueIndex
-                        = (int)CinemachineBlendDefinition.Style.EaseInOut;
-                    blendProp.FindPropertyRelative(() => def2.m_Time).floatValue = 2f;
-                };
         }
     }
 }

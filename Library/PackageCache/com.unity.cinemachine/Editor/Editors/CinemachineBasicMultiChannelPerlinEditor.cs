@@ -1,37 +1,36 @@
-using UnityEngine;
 using UnityEditor;
+using UnityEngine.UIElements;
 
-namespace Cinemachine.Editor
+namespace Unity.Cinemachine.Editor
 {
     [CustomEditor(typeof(CinemachineBasicMultiChannelPerlin))]
     [CanEditMultipleObjects]
-    internal sealed class CinemachineBasicMultiChannelPerlinEditor 
-        : BaseEditor<CinemachineBasicMultiChannelPerlin>
+    class CinemachineBasicMultiChannelPerlinEditor : UnityEditor.Editor
     {
-        private void OnEnable()
+        public override VisualElement CreateInspectorGUI()
         {
-            NoiseSettingsPropertyDrawer.InvalidateProfileList();
-        }
+            var ux = new VisualElement();
+            this.AddMissingCmCameraHelpBox(ux);
 
-        public override void OnInspectorGUI()
-        {
-            BeginInspector();
-            bool needWarning = false;
-            for (int i = 0; !needWarning && i < targets.Length; ++i)
-                needWarning = (targets[i] as CinemachineBasicMultiChannelPerlin).m_NoiseProfile == null;
-            if (needWarning)
-                EditorGUILayout.HelpBox(
-                    "A Noise Profile is required.  You may choose from among the NoiseSettings assets defined in the project.",
-                    MessageType.Warning);
-            DrawRemainingPropertiesInInspector();
+            var noProfile = ux.AddChild(new HelpBox(
+                "A Noise Profile is required.  You may choose from among the NoiseSettings assets defined "
+                + "in the project, or from one of the presets.", 
+                HelpBoxMessageType.Warning));
 
-            Rect rect = EditorGUILayout.GetControlRect(true);
-            rect.width -= EditorGUIUtility.labelWidth; rect.x += EditorGUIUtility.labelWidth;
-            if (GUI.Button(rect, "New random seed"))
+            var perlin = target as CinemachineBasicMultiChannelPerlin;
+            var profileProp = serializedObject.FindProperty(() => perlin.NoiseProfile);
+            InspectorUtility.AddRemainingProperties(ux, profileProp);
+
+            var row = ux.AddChild(new InspectorUtility.LeftRightRow());
+            row.Right.Add(new Button(() =>
             {
                 for (int i = 0; i < targets.Length; ++i)
                     (targets[i] as CinemachineBasicMultiChannelPerlin).ReSeed();
-            }
+            }) { text = "New random seed", style = { flexGrow = 0 }});
+
+            ux.TrackPropertyWithInitialCallback(profileProp, (p) => noProfile.SetVisible(p.objectReferenceValue == null));
+
+            return ux;
         }
     }
 }

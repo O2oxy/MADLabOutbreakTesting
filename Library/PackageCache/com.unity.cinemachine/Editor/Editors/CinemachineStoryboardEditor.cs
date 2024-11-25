@@ -1,151 +1,84 @@
-#if !UNITY_2019_1_OR_NEWER
-#define CINEMACHINE_UGUI
-#endif
-
 #if CINEMACHINE_UGUI
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.UIElements;
+using UnityEditor.UIElements;
 
-namespace Cinemachine.Editor
+namespace Unity.Cinemachine.Editor
 {
-    [InitializeOnLoad]
-    static class CinemachineStoryboardMute
-    {
-        static CinemachineStoryboardMute()
-        {
-            CinemachineStoryboard.s_StoryboardGlobalMute = Enabled;
-        }
-
-        public static string kEnabledKey = "StoryboardMute_Enabled";
-        public static bool Enabled
-        {
-            get { return EditorPrefs.GetBool(kEnabledKey, false); }
-            set
-            {
-                if (value != Enabled)
-                {
-                    EditorPrefs.SetBool(kEnabledKey, value);
-                    CinemachineStoryboard.s_StoryboardGlobalMute = value;
-                    InspectorUtility.RepaintGameView();
-                }
-            }
-        }
-    }
-
     [CustomEditor(typeof(CinemachineStoryboard))]
     [CanEditMultipleObjects]
-    internal sealed class CinemachineStoryboardEditor : BaseEditor<CinemachineStoryboard>
+    class CinemachineStoryboardEditor : UnityEditor.Editor
     {
-        public void OnDisable()
+        CinemachineStoryboard Target => target as CinemachineStoryboard;
+        static bool s_AdvancedFoldout;
+
+        public override VisualElement CreateInspectorGUI()
         {
-            WaveformWindow.SetDefaultUpdateInterval();
-        }
+            var ux = new VisualElement();
+            this.AddMissingCmCameraHelpBox(ux);
 
-        const float FastWaveformUpdateInterval = 0.1f;
-        float mLastSplitScreenEventTime = 0;
-        static bool sAdvancedFoldout;
-        
-        public override void OnInspectorGUI()
-        {
-            float now = Time.realtimeSinceStartup;
-            if (now - mLastSplitScreenEventTime > FastWaveformUpdateInterval * 5)
-                WaveformWindow.SetDefaultUpdateInterval();
-
-            BeginInspector();
-            CinemachineStoryboardMute.Enabled
-                = EditorGUILayout.Toggle(
-                    new GUIContent(
-                        "Storyboard Global Mute",
-                        "If checked, all storyboards are globally muted."),
-                    CinemachineStoryboardMute.Enabled);
-
-            Rect rect = EditorGUILayout.GetControlRect(true);
-            EditorGUI.BeginChangeCheck();
+            // Global mute
+            var muteToggle = ux.AddChild(new Toggle(CinemachineCorePrefs.s_StoryboardGlobalMuteLabel.text) 
+            { 
+                tooltip = CinemachineCorePrefs.s_StoryboardGlobalMuteLabel.tooltip,
+                value = CinemachineStoryboard.s_StoryboardGlobalMute
+            });
+            muteToggle.AddToClassList(InspectorUtility.AlignFieldClassName);
+            muteToggle.RegisterValueChangedCallback((evt) => 
             {
-                float width = rect.width;
-                rect.width = EditorGUIUtility.labelWidth + rect.height;
-                EditorGUI.PropertyField(rect, FindProperty(x => x.m_ShowImage));
+                CinemachineStoryboard.s_StoryboardGlobalMute = CinemachineCorePrefs.StoryboardGlobalMute.Value = evt.newValue;
+                UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
+            });
 
-                rect.x += rect.width; rect.width = width - rect.width;
-                EditorGUI.PropertyField(rect, FindProperty(x => x.m_Image), GUIContent.none);
+            // Image
+            var showImageProp = serializedObject.FindProperty(() => Target.ShowImage);
+            var row = ux.AddChild(new InspectorUtility.LabeledRow("Show Image", showImageProp.tooltip));
+            var imageToggle = row.Contents.AddChild(new Toggle("") 
+                { style = { flexGrow = 0, marginTop = 3, marginLeft = 3, alignSelf = Align.Center }});
+            imageToggle.BindProperty(showImageProp);
+            var imageField = row.Contents.AddChild(new PropertyField(serializedObject.FindProperty(() => Target.Image), "")
+                { style = { flexGrow = 1, marginLeft = 4 }});
+            imageField.TrackPropertyWithInitialCallback(showImageProp, (p) => imageField.SetVisible(p.boolValue));
 
-                EditorGUILayout.PropertyField(FindProperty(x => x.m_Aspect));
-                EditorGUILayout.PropertyField(FindProperty(x => x.m_Alpha));
-                EditorGUILayout.PropertyField(FindProperty(x => x.m_Center));
-                EditorGUILayout.PropertyField(FindProperty(x => x.m_Rotation));
+            ux.AddChild(new PropertyField(serializedObject.FindProperty(() => Target.Aspect)));
+            ux.AddChild(new PropertyField(serializedObject.FindProperty(() => Target.Alpha)));
+            ux.AddChild(new PropertyField(serializedObject.FindProperty(() => Target.Center)));
+            ux.AddChild(new PropertyField(serializedObject.FindProperty(() => Target.Rotation)));
 
-                rect = EditorGUILayout.GetControlRect(true);
-                EditorGUI.LabelField(rect, "Scale");
-                rect.x += EditorGUIUtility.labelWidth; rect.width -= EditorGUIUtility.labelWidth;
-                rect.width /= 3;
-                serializedObject.SetIsDifferentCacheDirty(); // prop.hasMultipleDifferentValues always results in false if the SO isn't refreshed here
-                var prop = FindProperty(x => x.m_SyncScale);
-                var syncHasDifferentValues = prop.hasMultipleDifferentValues;
-                GUIContent syncLabel = new GUIContent("Sync", prop.tooltip);
-                EditorGUI.showMixedValue = syncHasDifferentValues;
-                prop.boolValue = EditorGUI.ToggleLeft(rect, syncLabel, prop.boolValue);
-                EditorGUI.showMixedValue = false;
-                rect.x += rect.width;
-                if (prop.boolValue || targets.Length > 1 && syncHasDifferentValues)
-                {
-                    prop = FindProperty(x => x.m_Scale);
-                    float[] values = new float[1] { prop.vector2Value.x };
-                    EditorGUI.showMixedValue = prop.hasMultipleDifferentValues;
-                    EditorGUI.MultiFloatField(rect, new GUIContent[1] { new GUIContent("X") }, values);
-                    EditorGUI.showMixedValue = false;
-                    prop.vector2Value = new Vector2(values[0], values[0]);
-                }
-                else
-                {
-                    rect.width *= 2;
-                    prop = FindProperty(x => x.m_Scale);
-                    EditorGUI.showMixedValue = prop.hasMultipleDifferentValues;
-                    EditorGUI.PropertyField(rect, prop, GUIContent.none);
-                    EditorGUI.showMixedValue = false;
-                }
-                EditorGUILayout.PropertyField(FindProperty(x => x.m_MuteCamera));
-            }
-            if (EditorGUI.EndChangeCheck())
-                serializedObject.ApplyModifiedProperties();
-
-            EditorGUILayout.Space();
-            EditorGUI.BeginChangeCheck();
-            EditorGUILayout.PropertyField(FindProperty(x => x.m_SplitView));
-            if (EditorGUI.EndChangeCheck())
+            // Scale
+            var scaleProp = serializedObject.FindProperty(() => Target.Scale);
+            row = ux.AddChild(new InspectorUtility.LabeledRow(scaleProp.displayName, scaleProp.tooltip));
+            var scaleField = row.Contents.AddChild(new PropertyField(scaleProp, "") { style = { flexBasis = 50, flexGrow = 2 }});
+            var syncProp = serializedObject.FindProperty(() => Target.SyncScale);
+            var syncField = row.Contents.AddChild(new Toggle("") 
+                { text = " Sync", style = { flexBasis = 20, flexGrow = 1, paddingLeft = 1, paddingTop = 2 }});
+            syncField.BindProperty(syncProp);
+            scaleField.TrackPropertyWithInitialCallback(syncProp, (p) =>
             {
-                mLastSplitScreenEventTime = now;
-                WaveformWindow.UpdateInterval = FastWaveformUpdateInterval;
-                serializedObject.ApplyModifiedProperties();
-            }
-            rect = EditorGUILayout.GetControlRect(true);
-            GUI.Label(new Rect(rect.x, rect.y, EditorGUIUtility.labelWidth, rect.height),
-                "Waveform Monitor");
-            rect.width -= EditorGUIUtility.labelWidth; rect.width /= 2;
-            rect.x += EditorGUIUtility.labelWidth;
-            if (GUI.Button(rect, "Open"))
-                WaveformWindow.OpenWindow();
+                var f = scaleField.Q<FloatField>("unity-y-input");
+                f?.SetVisible(!p.boolValue);
+            });
 
-            EditorGUILayout.Space();
-            sAdvancedFoldout = EditorGUILayout.Foldout(sAdvancedFoldout, "Advanced");
-            if (sAdvancedFoldout)
-            {
-                ++EditorGUI.indentLevel;
-                
-                EditorGUI.BeginChangeCheck();
-                var renderModeProperty = FindProperty(x => x.m_RenderMode);
-                EditorGUILayout.PropertyField(renderModeProperty);
-                EditorGUILayout.PropertyField(FindProperty(x => x.m_SortingOrder));
-                if (renderModeProperty.enumValueIndex == (int) RenderMode.ScreenSpaceCamera)
-                {
-                    EditorGUILayout.PropertyField(FindProperty(x => x.m_PlaneDistance));
-                }
-                if (EditorGUI.EndChangeCheck())
-                {
-                    serializedObject.ApplyModifiedProperties();
-                }
-                
-                --EditorGUI.indentLevel;
-            }
+            ux.AddChild(new PropertyField(serializedObject.FindProperty(() => Target.MuteCamera)));
+            var splitField = ux.AddChild(new PropertyField(serializedObject.FindProperty(() => Target.SplitView)));
+            splitField.RegisterValueChangeCallback((evt) => WaveformWindow.RefreshNow());
+
+            var waveformRow = ux.AddChild(new InspectorUtility.LeftRightRow() { style = { marginTop = 2 }});
+            waveformRow.Left.Add(new Label("Waveform Monitor"));
+            waveformRow.Right.AddChild(new Button(() => WaveformWindow.OpenWindow()) { text ="Open", style = { flexBasis = 100 }});
+
+            // Advanced
+            var advanced = ux.AddChild(new Foldout() { text = "Advanced", value = s_AdvancedFoldout });
+            advanced.RegisterValueChangedCallback((evt) => s_AdvancedFoldout = evt.newValue);
+            var renderModeProp = serializedObject.FindProperty(() => Target.RenderMode);
+            advanced.AddChild(new PropertyField(renderModeProp));
+            advanced.AddChild(new PropertyField(serializedObject.FindProperty(() => Target.SortingOrder)));
+            var planeDistacneField = advanced.AddChild(new PropertyField(serializedObject.FindProperty(() => Target.PlaneDistance)));
+            planeDistacneField.TrackPropertyWithInitialCallback(
+                renderModeProp, (p) => planeDistacneField.SetVisible(p.intValue == (int)RenderMode.ScreenSpaceCamera));
+
+            return ux;
         }
     }
 }

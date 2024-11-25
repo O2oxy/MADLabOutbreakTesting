@@ -1,18 +1,14 @@
-#if !UNITY_2019_1_OR_NEWER
-#define CINEMACHINE_TIMELINE
-#endif
 #if CINEMACHINE_TIMELINE
 
 using System;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
-using Cinemachine;
 
-//namespace Cinemachine.Timeline
-//{
+namespace Unity.Cinemachine
+{
     /// <summary>
-    /// Timeline track for Cinemachine virtual camera activation
+    /// Timeline track for CinemachineCamera activation
     /// </summary>
     [Serializable]
     [TrackClipType(typeof(CinemachineShot))]
@@ -20,6 +16,12 @@ using Cinemachine;
     [TrackColor(0.53f, 0.0f, 0.08f)]
     public class CinemachineTrack : TrackAsset
     {
+        [Tooltip("The priority controls the precedence that this track takes over other CinemachineTracks.  "
+            + "Tracks with higher priority will override tracks with lower priority.  If two " 
+            + "simultaneous tracks have the same priority, then the more-recently instanced track will "
+            + "take precedence.  Track priority is unrelated to Cinemachine Camera priority.")]
+        public int TrackPriority;
+
         /// <summary>
         /// TrackAsset implementation
         /// </summary>
@@ -30,20 +32,11 @@ using Cinemachine;
         public override Playable CreateTrackMixer(
             PlayableGraph graph, GameObject go, int inputCount)
         {
-#if !UNITY_2019_2_OR_NEWER
-            // Hack to set the display name of the clip to match the vcam
-            foreach (var c in GetClips())
-            {
-                CinemachineShot shot = (CinemachineShot)c.asset;
-                CinemachineVirtualCameraBase vcam = shot.VirtualCamera.Resolve(graph.GetResolver());
-                if (vcam != null)
-                    c.displayName = vcam.Name;
-            }
-#endif
-            var mixer = ScriptPlayable<CinemachineMixer>.Create(graph);
+            var mixer = ScriptPlayable<CinemachinePlayableMixer>.Create(graph);
             mixer.SetInputCount(inputCount);
+            mixer.GetBehaviour().Priority = TrackPriority;
             return mixer;
         }
     }
-//}
+}
 #endif

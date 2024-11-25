@@ -1,14 +1,21 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System;
 
-namespace Cinemachine
+namespace Unity.Cinemachine
 {
-    internal class TargetPositionCache
+    /// <summary>
+    /// Use this class to support caching of Cinemachine target positions and rotations for the 
+    /// purposes of timeline scrubbing in the Editor.  At runtime, the public methods in this class
+    /// simply return the uncached values from the target's transform.
+    /// 
+    /// Cinemachine behaviours and extensions that support timeline scrubbing should use the 
+    /// GetTargetPosition and GetTargetRotation static methods when accessing the target's position or rotation.
+    /// </summary>
+    public class TargetPositionCache
     {
-        public static bool UseCache;
-        public const float CacheStepSize = 1 / 60.0f;
-        public enum Mode { Disabled, Record, Playback }
+        internal static bool UseCache;
+        internal const float CacheStepSize = 1 / 60.0f;
+        internal enum Mode { Disabled, Record, Playback }
        
         static Mode m_CacheMode = Mode.Disabled;
 
@@ -17,7 +24,7 @@ namespace Cinemachine
         static void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode) { ClearCache(); }
 #endif
 
-        public static Mode CacheMode
+        internal static Mode CacheMode
         {
             get => m_CacheMode;
             set
@@ -34,15 +41,15 @@ namespace Cinemachine
             }
         }
 
-        public static bool IsRecording => UseCache && m_CacheMode == Mode.Record;
-        public static bool CurrentPlaybackTimeValid => UseCache && m_CacheMode == Mode.Playback && HasCurrentTime;
-        public static bool IsEmpty => CacheTimeRange.IsEmpty;
+        internal static bool IsRecording => UseCache && m_CacheMode == Mode.Record;
+        internal static bool CurrentPlaybackTimeValid => UseCache && m_CacheMode == Mode.Playback && HasCurrentTime;
+        internal static bool IsEmpty => CacheTimeRange.IsEmpty;
 
-        public static float CurrentTime;
+        internal static float CurrentTime;
 
         // These are used during recording to manage camera cuts
-        public static int CurrentFrame;
-        public static bool IsCameraCut;
+        internal static int CurrentFrame;
+        internal static bool IsCameraCut;
 
         class CacheCurve
         {
@@ -171,7 +178,7 @@ namespace Cinemachine
 
         static Dictionary<Transform, CacheEntry> m_Cache;
 
-        public struct TimeRange
+        internal struct TimeRange
         {
             public float Start;
             public float End;
@@ -188,10 +195,10 @@ namespace Cinemachine
             }
         }
         static TimeRange m_CacheTimeRange;
-        public static TimeRange CacheTimeRange { get => m_CacheTimeRange; }
-        public static bool HasCurrentTime { get => m_CacheTimeRange.Contains(CurrentTime); }
+        internal static TimeRange CacheTimeRange { get => m_CacheTimeRange; }
+        internal static bool HasCurrentTime { get => m_CacheTimeRange.Contains(CurrentTime); }
 
-        public static void ClearCache()
+        internal static void ClearCache()
         {
             m_Cache = CacheMode == Mode.Disabled ? null : new Dictionary<Transform, CacheEntry>();
             m_CacheTimeRange = TimeRange.Empty;
@@ -202,21 +209,25 @@ namespace Cinemachine
 
         static void CreatePlaybackCurves()
         {
-            if (m_Cache == null)
-                m_Cache = new Dictionary<Transform, CacheEntry>();
+            m_Cache ??= new Dictionary<Transform, CacheEntry>();
             var iter = m_Cache.GetEnumerator();
             while (iter.MoveNext())
                 iter.Current.Value.CreateCurves();
+            iter.Dispose();
         }
 
         const float kWraparoundSlush = 0.1f;
 
         /// <summary>
-        /// If Recording, will log the target position at the CurrentTime.
-        /// Otherwise, will fetch the cached position at CurrentTime.
+        /// When using Timeline in Edit mode:
+        ///  - If you're Recording, the method logs the target position at the CurrentTime.
+        ///  - Otherwise, it fetches the cached position at CurrentTime.
+        ///  
+        /// When using Timeline in Play mode, and when you're not scrubbing it:
+        ///  - The method returns the position directly from the Transform.
         /// </summary>
         /// <param name="target">Target whose transform is tracked</param>
-        /// <param name="position">Target's position at CurrentTime</param>
+        /// <returns>The effective position of the target.</returns>
         public static Vector3 GetTargetPosition(Transform target)
         {
             if (!UseCache || CacheMode == Mode.Disabled)
@@ -253,11 +264,15 @@ namespace Cinemachine
         }
 
         /// <summary>
-        /// If Recording, will log the target rotation at the CurrentTime.
-        /// Otherwise, will fetch the cached position at CurrentTime.
+        /// When using Timeline in Edit mode:
+        ///  - If you're Recording, the method logs the target position at the CurrentTime.
+        ///  - Otherwise, it fetches the cached position at CurrentTime.
+        ///  
+        /// When using Timeline in Play mode, and when you're not scrubbing it:
+        ///  - The method returns the position directly from the Transform.
         /// </summary>
         /// <param name="target">Target whose transform is tracked</param>
-        /// <param name="rotation">Target's rotation at CurrentTime</param>
+        /// <returns>The effective position of the target.</returns>
         public static Quaternion GetTargetRotation(Transform target)
         {
             if (CacheMode == Mode.Disabled)

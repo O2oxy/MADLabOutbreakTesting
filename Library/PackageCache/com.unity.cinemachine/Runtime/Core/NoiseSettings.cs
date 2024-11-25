@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using UnityEngine.Serialization;
 
-namespace Cinemachine
+namespace Unity.Cinemachine
 {
     /// <summary>
     /// This is an asset that defines a noise profile.  A noise profile is the 
@@ -17,12 +17,10 @@ namespace Cinemachine
     /// and is the basis of much signal processing.  It doesn't really have much to do with this
     /// asset, but it's super interesting!
     /// </summary>
-    [DocumentationSorting(DocumentationSortingAttribute.Level.UserRef)]
     [HelpURL(Documentation.BaseURL + "manual/CinemachineNoiseProfiles.html")]
     public sealed class NoiseSettings : SignalSourceAsset
     {
         /// <summary>Describes the behaviour for a channel of noise</summary>
-        [DocumentationSorting(DocumentationSortingAttribute.Level.UserRef)]
         [Serializable]
         public struct NoiseParams
         {
@@ -54,7 +52,6 @@ namespace Cinemachine
         /// <summary>
         /// Contains the behaviour of noise for the noise module for all 3 cardinal axes of the camera
         /// </summary>
-        [DocumentationSorting(DocumentationSortingAttribute.Level.UserRef)]
         [Serializable]
         public struct TransformNoiseParams
         {
@@ -85,13 +82,13 @@ namespace Cinemachine
         [Tooltip("These are the noise channels for the virtual camera's position. Convincing noise setups "
             + "typically mix low, medium and high frequencies together, so start with a size of 3")]
         [FormerlySerializedAs("m_Position")]
-        public TransformNoiseParams[] PositionNoise = Array.Empty<TransformNoiseParams>();
+        public TransformNoiseParams[] PositionNoise = new TransformNoiseParams[0];
 
         /// <summary>The array of orientation noise channels for this <c>NoiseSettings</c></summary>
         [Tooltip("These are the noise channels for the virtual camera's orientation. Convincing noise "
             + "setups typically mix low, medium and high frequencies together, so start with a size of 3")]
         [FormerlySerializedAs("m_Orientation")]
-        public TransformNoiseParams[] OrientationNoise = Array.Empty<TransformNoiseParams>();
+        public TransformNoiseParams[] OrientationNoise = new TransformNoiseParams[0];
 
         /// <summary>Get the noise signal value at a specific time</summary>
         /// <param name="noiseParams">The parameters that define the noise function</param>

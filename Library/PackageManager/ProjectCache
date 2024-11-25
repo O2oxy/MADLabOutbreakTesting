@@ -1,33 +1,33 @@
 m_ProjectFiles:
   m_ManifestFileStatus:
-    m_FilePath: C:/Users/Ruibo/Desktop/UTAD/MADLabOutbreakTesting/Packages/manifest.json
+    m_FilePath: C:/Users/Ruibo/Desktop/UTAD Jogos/MADLabOutbreakTesting/Packages/manifest.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638671918813163166
-    m_Hash: 4177469959
+      ticks: 638681510774045193
+    m_Hash: 2495136412
   m_LockFileStatus:
-    m_FilePath: C:/Users/Ruibo/Desktop/UTAD/MADLabOutbreakTesting/Packages/packages-lock.json
+    m_FilePath: C:/Users/Ruibo/Desktop/UTAD Jogos/MADLabOutbreakTesting/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638671918813213865
-    m_Hash: 526331929
+      ticks: 638681510774100370
+    m_Hash: 2728628106
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_LocalPackages:
   m_LocalFileStatus: []
-m_ProjectPath: C:/Users/Ruibo/Desktop/UTAD/MADLabOutbreakTesting/Packages
+m_ProjectPath: C:/Users/Ruibo/Desktop/UTAD Jogos/MADLabOutbreakTesting/Packages
 m_EditorVersion: 6000.0.24f1 (11fa355cd605)
 m_ResolvedPackages:
-- packageId: com.unity.ai.navigation@2.0.4
+- packageId: com.unity.ai.navigation@2.0.5
   testable: 0
   isDirectDependency: 1
-  version: 2.0.4
+  version: 2.0.5
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.ai.navigation
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.ai.navigation
   assetPath: Packages/com.unity.ai.navigation
   name: com.unity.ai.navigation
   displayName: AI Navigation
@@ -60,9 +60,11 @@ m_ResolvedPackages:
     - 2.0.0
     - 2.0.3
     - 2.0.4
+    - 2.0.5
     compatible:
     - 2.0.4
-    recommended: 2.0.4
+    - 2.0.5
+    recommended: 2.0.5
     deprecated: []
   dependencies:
   - name: com.unity.modules.ai
@@ -101,13 +103,13 @@ m_ResolvedPackages:
   entitlements:
     licensingModel: 1
   isAssetStorePackage: 0
-  datePublishedTicks: 638605675584270000
+  datePublishedTicks: 638675282916940000
   documentationUrl: https://docs.unity3d.com/Packages/com.unity.ai.navigation@2.0/manual/index.html
   hasRepository: 1
   repository:
     type: git
     url: https://github.cds.internal.unity3d.com/unity/com.unity.ai.navigation.git
-    revision: 2c565f88d424bed980de32ead5a48791e9db9936
+    revision: 110941630e19b3574f9f81fd6fe3c28e867a9321
     path: 
   unityLifecycle:
     version: 2.0.4
@@ -120,21 +122,134 @@ m_ResolvedPackages:
   git:
     hash: 
     revision: 
-  upmReserved: '{"changelog":"### Fixed\n* NavMesh Modifier was not overriding the
-    area type in a NavMesh built from within an `Awake()` method ([NAVB-39](https://issuetracker.unity3d.com/issues/building-navmesh-with-navmeshsurface-does-not-bake-areas-into-navmeshtriangulation-when-buildnavmesh-is-called-in-awake))"}'
+  upmReserved: '{"changelog":"### Fixed\n* NavMesh Link would not update when switching
+    from the **Not Walkable** area type to any other area type in the inspector.
+    (NAVB-87)\n* A few documentation paragraphs and links were not accurate."}'
   assetStore:
     productId: 
-  fingerprint: 3f89ad87253dcaae2d0bb583bd5ef4c4f2c17764
+  fingerprint: 9f76b145f0a8dd734ff2a4877f7f7edb83b7f62c
   editorCompatibility:
     compatibilityLevel: 0
     minimumPackageVersion: 2.0.4
     minimumUnityVersion: 2023.2.0a18
+- packageId: com.unity.animation.rigging@1.3.0
+  testable: 0
+  isDirectDependency: 1
+  version: 1.3.0
+  source: 1
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.animation.rigging
+  assetPath: Packages/com.unity.animation.rigging
+  name: com.unity.animation.rigging
+  displayName: Animation Rigging
+  author:
+    name: 
+    email: 
+    url: 
+  category: Animation
+  type: asset
+  description: Animation Rigging toolkit using Unity's Animation C# Jobs
+  errors: []
+  versions:
+    all:
+    - 0.1.2-preview
+    - 0.1.4-preview
+    - 0.2.1-preview
+    - 0.2.2-preview
+    - 0.2.3-preview
+    - 0.2.5-preview
+    - 0.2.6-preview
+    - 0.2.7-preview
+    - 0.3.2-preview
+    - 0.3.3-preview
+    - 0.3.4-preview
+    - 1.0.2
+    - 1.0.3
+    - 1.1.0
+    - 1.1.1
+    - 1.2.0
+    - 1.2.1
+    - 1.3.0
+    compatible:
+    - 1.3.0
+    recommended: 1.3.0
+    deprecated: []
+  dependencies:
+  - name: com.unity.burst
+    version: 1.4.1
+  - name: com.unity.test-framework
+    version: 1.1.24
+  resolvedDependencies:
+  - name: com.unity.burst
+    version: 1.8.18
+  - name: com.unity.mathematics
+    version: 1.3.2
+  - name: com.unity.modules.jsonserialize
+    version: 1.0.0
+  - name: com.unity.test-framework
+    version: 1.4.5
+  - name: com.unity.ext.nunit
+    version: 2.0.5
+  - name: com.unity.modules.imgui
+    version: 1.0.0
+  keywords:
+  - Animation
+  - Rigging
+  - Constraints
+  registry:
+    id: main
+    name: 
+    url: https://packages.unity.com
+    scopes: []
+    isDefault: 1
+    capabilities: 7
+    configSource: 0
+  hideInEditor: 1
+  entitlements:
+    licensingModel: 1
+  isAssetStorePackage: 0
+  datePublishedTicks: 638110143470000000
+  documentationUrl: https://docs.unity3d.com/Packages/com.unity.animation.rigging@1.3/manual/index.html
+  hasRepository: 1
+  repository:
+    type: git
+    url: https://github.cds.internal.unity3d.com/unity/com.unity.animation.rigging.git
+    revision: 56e7b7c84bac20a2a5885468b6849c14b3ef49f4
+    path: 
+  unityLifecycle:
+    version: 1.3.0
+    nextVersion: 
+    recommendedVersion: 
+    isDeprecated: 0
+    deprecationMessage: 
+  isDeprecated: 0
+  deprecationMessage: 
+  git:
+    hash: 
+    revision: 
+  upmReserved: '{"changelog":"- Added the `TransformHandle`''s function `GetLocalToParentMatrix`
+    to get the matrix of an animation stream transform in local space.\n- Added the
+    `TransformHandle`''s function `GetLocalToWorldMatrix` to get the matrix of an
+    animation stream transform in world space.\n- Fixed handling negative scale in
+    the `MultiAimConstraintJob` (case 1366549).\n- Fixed transforms in animator hierarchy,
+    but not children of avatar root not resolving properly (case 1373387).\n- Fixed
+    MultiAimConstraint evaluation with a world up axis (UM-1936).\n- Fixed crash
+    when calling `RigBuilder.Build` by preventing rebuilding the PlayableGraph when
+    in a preview context (case UUM-8599).\n- Fixed an issue where a misplaced `BoneHandles.shader`
+    shader would cause the Scene View''s Orientation Overlay to no longer render
+    (case UUM-20874)."}'
+  assetStore:
+    productId: 
+  fingerprint: 68167b505d2b550a35f5d5b6daef6193de3c7460
+  editorCompatibility:
+    compatibilityLevel: 0
+    minimumPackageVersion: 1.3.0
+    minimumUnityVersion: 2022.2.0a9
 - packageId: com.unity.burst@1.8.18
   testable: 0
   isDirectDependency: 1
   version: 1.8.18
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.burst
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.burst
   assetPath: Packages/com.unity.burst
   name: com.unity.burst
   displayName: Burst
@@ -347,12 +462,12 @@ m_ResolvedPackages:
     compatibilityLevel: 0
     minimumPackageVersion: 1.8.18
     minimumUnityVersion: 2020.3.0a1
-- packageId: com.unity.cinemachine@2.10.1
+- packageId: com.unity.cinemachine@3.1.2
   testable: 0
   isDirectDependency: 1
-  version: 2.10.1
+  version: 3.1.2
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.cinemachine
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.cinemachine
   assetPath: Packages/com.unity.cinemachine
   name: com.unity.cinemachine
   displayName: Cinemachine
@@ -361,12 +476,11 @@ m_ResolvedPackages:
     email: 
     url: 
   category: cinematography
-  type: assets
-  description: "Smart camera tools for passionate creators. \n\nNew starting from
-    2.7.1: Are you looking for the Cinemachine menu? It has moved to the GameObject
-    menu.\n\nIMPORTANT NOTE: If you are upgrading from the legacy Asset Store version
-    of Cinemachine, delete the Cinemachine asset from your project BEFORE installing
-    this version from the Package Manager."
+  type: 
+  description: "Smart camera tools for passionate creators. \n\nCinemachine 3 is
+    a newer and better version of Cinemachine, but upgrading an existing project
+    from 2.X will likely require some effort.  If you're considering upgrading an
+    older project, please see our upgrade guide in the user manual."
   errors: []
   versions:
     all:
@@ -468,17 +582,21 @@ m_ResolvedPackages:
     recommended: 3.1.2
     deprecated: []
   dependencies:
-  - name: com.unity.test-framework
-    version: 1.1.31
+  - name: com.unity.splines
+    version: 2.0.0
   resolvedDependencies:
-  - name: com.unity.test-framework
-    version: 1.4.5
-  - name: com.unity.ext.nunit
-    version: 2.0.5
+  - name: com.unity.splines
+    version: 2.6.1
+  - name: com.unity.ugui
+    version: 2.0.0
+  - name: com.unity.modules.ui
+    version: 1.0.0
   - name: com.unity.modules.imgui
     version: 1.0.0
-  - name: com.unity.modules.jsonserialize
-    version: 1.0.0
+  - name: com.unity.mathematics
+    version: 1.3.2
+  - name: com.unity.settings-manager
+    version: 2.0.1
   keywords:
   - camera
   - follow
@@ -514,13 +632,13 @@ m_ResolvedPackages:
   entitlements:
     licensingModel: 1
   isAssetStorePackage: 0
-  datePublishedTicks: 638551642370000000
-  documentationUrl: https://docs.unity3d.com/Packages/com.unity.cinemachine@2.10/manual/index.html
+  datePublishedTicks: 638636431400750000
+  documentationUrl: https://docs.unity3d.com/Packages/com.unity.cinemachine@3.1/manual/index.html
   hasRepository: 1
   repository:
     type: git
     url: https://github.com/Unity-Technologies/com.unity.cinemachine.git
-    revision: 99f33a2a49de6506040887bf2cadade68d040e47
+    revision: 13a4bc8cd360bfd308f28f14da1f58948e9944f7
     path: 
   unityLifecycle:
     version: 2.10.1
@@ -533,27 +651,36 @@ m_ResolvedPackages:
   git:
     hash: 
     revision: 
-  upmReserved: '{"changelog":"- Bugfix: Solo was not updating when brain was in FixedUpdate.\n-
-    Bugfix: Target Groups with zero active members now report their last valid position
-    and dimensions.\n- Bugfix: Cinemachine cameras would sometimes unnecessarily
-    dirty the scene due to floating-point imprecision when setting transform rotations.\n-
-    Bugfix: The GroupAverage Rotation Mode in CinemachineTargetGroup was not calculated
-    properly.\n- Bugfix: PostProcessing and VolumeSettings were not blending correctly
-    to and from empty profiles.\n- Bugfix: added missing null check in CinemachineTargetGroup.WeightedMemberBoundsForValidMember.\n-
-    Bugfix: RuntimeUtility.SphereCastIgnoreTag was sometimes retruning NaN result."}'
+  upmReserved: '{"changelog":"### Added\n- Added CinemachineVirtualCameraBaseEditor,
+    to facilitate making conformant inspectors for custom virtual cameras and virtual
+    camera managers.\n- Added Padding option to CinemachineConfiner2D.\n- Added CinemachineSplineSmoother
+    for creating smooth splines suitable for camera paths.  This replicates the behaviour
+    of CinemachineSmoothPath in CM2.\n- Added Easing option to CinemachineSplineRoll.\n-
+    Added SaveDuringPlay support to CinemchineSplineRoll.\n- Added preference option
+    to show spline normals instead of the railroad-track gizmo.\n\n### Changed\n-
+    The presence of a tracking target no longer affects whether the CinemachineCamera
+    state''s position and rotation are pushed back to the transform.\n- TargetPositionCache.GetTargetPosition()
+    and TargetPositionCache.GetTargetRotation() are now public, so that custom classes
+    can support cached timeline scrubbing.\n\n### Bugfixes\n- Sometimes a deeply-nested
+    passive camera''s position would creep due to precision inaccuracies.\n- When
+    coming out of a cutscene, sometimes the original camera would fail to be restored.\n-
+    Spline roll direction was inverted.\n- The upgrader sometimes failed to delete
+    all obsolete components.\n- The path upgrader was creating knots using Broken
+    instead of Mirrored mode, and was not setting knot rotations correctly.  This
+    resulted in spline Up vectors not always being smooth."}'
   assetStore:
     productId: 
-  fingerprint: 1a67f3dee6b9ccf2ae0f31d784489d79c8189b07
+  fingerprint: b2e7bffab7726d3b59b19bdf5d6f8e78f70b6c3b
   editorCompatibility:
     compatibilityLevel: 0
     minimumPackageVersion: 2.10.1
-    minimumUnityVersion: 2019.4.0a1
+    minimumUnityVersion: 2022.3.0a1
 - packageId: com.unity.collab-proxy@2.5.2
   testable: 0
   isDirectDependency: 1
   version: 2.5.2
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.collab-proxy
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.collab-proxy
   assetPath: Packages/com.unity.collab-proxy
   name: com.unity.collab-proxy
   displayName: Version Control
@@ -710,7 +837,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 2.5.1
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.collections
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.collections
   assetPath: Packages/com.unity.collections
   name: com.unity.collections
   displayName: Collections
@@ -876,7 +1003,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 2.0.5
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.ext.nunit
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.ext.nunit
   assetPath: Packages/com.unity.ext.nunit
   name: com.unity.ext.nunit
   displayName: Custom NUnit
@@ -955,7 +1082,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.2
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.feature.development
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.feature.development
   assetPath: Packages/com.unity.feature.development
   name: com.unity.feature.development
   displayName: Engineering
@@ -1056,7 +1183,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 3.0.31
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.ide.rider
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.ide.rider
   assetPath: Packages/com.unity.ide.rider
   name: com.unity.ide.rider
   displayName: JetBrains Rider Editor
@@ -1175,7 +1302,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 2.0.22
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.ide.visualstudio
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.ide.visualstudio
   assetPath: Packages/com.unity.ide.visualstudio
   name: com.unity.ide.visualstudio
   displayName: Visual Studio Editor
@@ -1281,7 +1408,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.11.2
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.inputsystem
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.inputsystem
   assetPath: Packages/com.unity.inputsystem
   name: com.unity.inputsystem
   displayName: Input System
@@ -1433,7 +1560,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.3.2
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.mathematics
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.mathematics
   assetPath: Packages/com.unity.mathematics
   name: com.unity.mathematics
   displayName: Mathematics
@@ -1522,7 +1649,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.multiplayer.center
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.multiplayer.center
   assetPath: Packages/com.unity.multiplayer.center
   name: com.unity.multiplayer.center
   displayName: Multiplayer Center
@@ -1612,7 +1739,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.11.4
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.nuget.mono-cecil
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.nuget.mono-cecil
   assetPath: Packages/com.unity.nuget.mono-cecil
   name: com.unity.nuget.mono-cecil
   displayName: Mono Cecil
@@ -1692,7 +1819,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 0.78.0-preview
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.package-validation-suite
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.package-validation-suite
   assetPath: Packages/com.unity.package-validation-suite
   name: com.unity.package-validation-suite
   displayName: Package Validation Suite
@@ -2015,7 +2142,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 17.0.3
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.render-pipelines.core
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.render-pipelines.core
   assetPath: Packages/com.unity.render-pipelines.core
   name: com.unity.render-pipelines.core
   displayName: Core RP Library
@@ -2229,7 +2356,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 17.0.3
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.render-pipelines.universal
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.render-pipelines.universal
   assetPath: Packages/com.unity.render-pipelines.universal
   name: com.unity.render-pipelines.universal
   displayName: Universal RP
@@ -2391,7 +2518,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 17.0.3
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.render-pipelines.universal-config
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.render-pipelines.universal-config
   assetPath: Packages/com.unity.render-pipelines.universal-config
   name: com.unity.render-pipelines.universal-config
   displayName: Universal RP Config
@@ -2489,7 +2616,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.1
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.rendering.light-transport
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.rendering.light-transport
   assetPath: Packages/com.unity.rendering.light-transport
   name: com.unity.rendering.light-transport
   displayName: Unity Light Transport Library
@@ -2585,7 +2712,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 4.9.2
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.searcher
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.searcher
   assetPath: Packages/com.unity.searcher
   name: com.unity.searcher
   displayName: Searcher
@@ -2669,7 +2796,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 17.0.3
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.shadergraph
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.shadergraph
   assetPath: Packages/com.unity.shadergraph
   name: com.unity.shadergraph
   displayName: Shader Graph
@@ -2872,7 +2999,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.4.5
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.test-framework
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.test-framework
   assetPath: Packages/com.unity.test-framework
   name: com.unity.test-framework
   displayName: Test Framework
@@ -3035,7 +3162,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 3.0.3
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.test-framework.performance
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.test-framework.performance
   assetPath: Packages/com.unity.test-framework.performance
   name: com.unity.test-framework.performance
   displayName: Performance testing API
@@ -3170,7 +3297,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.8.7
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.timeline
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.timeline
   assetPath: Packages/com.unity.timeline
   name: com.unity.timeline
   displayName: Timeline
@@ -3353,7 +3480,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 2.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.ugui
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.ugui
   assetPath: Packages/com.unity.ugui
   name: com.unity.ugui
   displayName: Unity UI
@@ -3440,12 +3567,12 @@ m_ResolvedPackages:
     compatibilityLevel: 0
     minimumPackageVersion: 2.0.0
     minimumUnityVersion: 2019.2.0a1
-- packageId: com.unity.visualscripting@1.9.4
+- packageId: com.unity.visualscripting@1.9.5
   testable: 0
   isDirectDependency: 1
-  version: 1.9.4
+  version: 1.9.5
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.visualscripting
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.visualscripting
   assetPath: Packages/com.unity.visualscripting
   name: com.unity.visualscripting
   displayName: Visual Scripting
@@ -3525,13 +3652,13 @@ m_ResolvedPackages:
   entitlements:
     licensingModel: 1
   isAssetStorePackage: 0
-  datePublishedTicks: 638488567680000000
+  datePublishedTicks: 638659692270900000
   documentationUrl: 
   hasRepository: 1
   repository:
     type: git
     url: https://github.cds.internal.unity3d.com/unity/com.unity.visualscripting.git
-    revision: 41aac2b7038c2b1259c546329890d3736ce2394e
+    revision: 3621ef0207747a605f195118ba99d1a8bdb19433
     path: 
   unityLifecycle:
     version: 1.9.4
@@ -3544,11 +3671,16 @@ m_ResolvedPackages:
   git:
     hash: 
     revision: 
-  upmReserved: '{"changelog":"### Fixed\n- Fixed sqlite dll changes not being recognized
-    correctly by the 2022.3 Unity Editor"}'
+  upmReserved: '{"changelog":"### Fixed\n- Fixed \"NullReferenceException\" error
+    when returning to the State Graph from the Script Graph. [UVSB-1905](https://issuetracker.unity3d.com/product/unity/issues/guid/UVSB-1905)\n-
+    Fixed compilation error when a graph contains a reference to a method with an
+    \"in\" parameter. [UVSB-2544](https://issuetracker.unity3d.com/product/unity/issues/guid/UVSB-2487)\n-
+    Added missing truncate function to Formula node [UVSB-2526](https://issuetracker.unity3d.com/product/unity/issues/guid/UVSB-2525)\n-
+    Fixed an error when creating a Script Graph asset in an empty project\n\n###
+    Changed\n- Updated deprecated EditorAnalytics APIs to new ones"}'
   assetStore:
     productId: 
-  fingerprint: 0920df93f9574f857a55af27bd38fdd9230a3f51
+  fingerprint: 1b53f46e931bea668e53f1feb0ac9138170c9455
   editorCompatibility:
     compatibilityLevel: 0
     minimumPackageVersion: 1.9.4
@@ -3558,7 +3690,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.accessibility
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.accessibility
   assetPath: Packages/com.unity.modules.accessibility
   name: com.unity.modules.accessibility
   displayName: Accessibility
@@ -3625,7 +3757,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.ai
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.ai
   assetPath: Packages/com.unity.modules.ai
   name: com.unity.modules.ai
   displayName: AI
@@ -3692,7 +3824,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.androidjni
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.androidjni
   assetPath: Packages/com.unity.modules.androidjni
   name: com.unity.modules.androidjni
   displayName: Android JNI
@@ -3758,7 +3890,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.animation
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.animation
   assetPath: Packages/com.unity.modules.animation
   name: com.unity.modules.animation
   displayName: Animation
@@ -3825,7 +3957,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.assetbundle
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.assetbundle
   assetPath: Packages/com.unity.modules.assetbundle
   name: com.unity.modules.assetbundle
   displayName: Asset Bundle
@@ -3892,7 +4024,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.audio
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.audio
   assetPath: Packages/com.unity.modules.audio
   name: com.unity.modules.audio
   displayName: Audio
@@ -3959,7 +4091,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.cloth
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.cloth
   assetPath: Packages/com.unity.modules.cloth
   name: com.unity.modules.cloth
   displayName: Cloth
@@ -4030,7 +4162,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.director
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.director
   assetPath: Packages/com.unity.modules.director
   name: com.unity.modules.director
   displayName: Director
@@ -4105,7 +4237,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.hierarchycore
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.hierarchycore
   assetPath: Packages/com.unity.modules.hierarchycore
   name: com.unity.modules.hierarchycore
   displayName: Hierarchy Core
@@ -4172,7 +4304,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.imageconversion
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.imageconversion
   assetPath: Packages/com.unity.modules.imageconversion
   name: com.unity.modules.imageconversion
   displayName: Image Conversion
@@ -4239,7 +4371,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.imgui
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.imgui
   assetPath: Packages/com.unity.modules.imgui
   name: com.unity.modules.imgui
   displayName: IMGUI
@@ -4306,7 +4438,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.jsonserialize
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.jsonserialize
   assetPath: Packages/com.unity.modules.jsonserialize
   name: com.unity.modules.jsonserialize
   displayName: JSONSerialize
@@ -4373,7 +4505,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.particlesystem
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.particlesystem
   assetPath: Packages/com.unity.modules.particlesystem
   name: com.unity.modules.particlesystem
   displayName: Particle System
@@ -4440,7 +4572,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.physics
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.physics
   assetPath: Packages/com.unity.modules.physics
   name: com.unity.modules.physics
   displayName: Physics
@@ -4507,7 +4639,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.physics2d
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.physics2d
   assetPath: Packages/com.unity.modules.physics2d
   name: com.unity.modules.physics2d
   displayName: Physics 2D
@@ -4574,7 +4706,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.screencapture
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.screencapture
   assetPath: Packages/com.unity.modules.screencapture
   name: com.unity.modules.screencapture
   displayName: Screen Capture
@@ -4645,7 +4777,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.subsystems
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.subsystems
   assetPath: Packages/com.unity.modules.subsystems
   name: com.unity.modules.subsystems
   displayName: Subsystems
@@ -4716,7 +4848,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.terrain
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.terrain
   assetPath: Packages/com.unity.modules.terrain
   name: com.unity.modules.terrain
   displayName: Terrain
@@ -4783,7 +4915,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.terrainphysics
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.terrainphysics
   assetPath: Packages/com.unity.modules.terrainphysics
   name: com.unity.modules.terrainphysics
   displayName: Terrain Physics
@@ -4858,7 +4990,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.tilemap
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.tilemap
   assetPath: Packages/com.unity.modules.tilemap
   name: com.unity.modules.tilemap
   displayName: Tilemap
@@ -4928,7 +5060,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.ui
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.ui
   assetPath: Packages/com.unity.modules.ui
   name: com.unity.modules.ui
   displayName: UI
@@ -4995,7 +5127,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.uielements
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.uielements
   assetPath: Packages/com.unity.modules.uielements
   name: com.unity.modules.uielements
   displayName: UIElements
@@ -5078,7 +5210,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.umbra
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.umbra
   assetPath: Packages/com.unity.modules.umbra
   name: com.unity.modules.umbra
   displayName: Umbra
@@ -5145,7 +5277,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.unityanalytics
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.unityanalytics
   assetPath: Packages/com.unity.modules.unityanalytics
   name: com.unity.modules.unityanalytics
   displayName: Unity Analytics
@@ -5219,7 +5351,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.unitywebrequest
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.unitywebrequest
   assetPath: Packages/com.unity.modules.unitywebrequest
   name: com.unity.modules.unitywebrequest
   displayName: Unity Web Request
@@ -5286,7 +5418,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.unitywebrequestassetbundle
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.unitywebrequestassetbundle
   assetPath: Packages/com.unity.modules.unitywebrequestassetbundle
   name: com.unity.modules.unitywebrequestassetbundle
   displayName: Unity Web Request Asset Bundle
@@ -5361,7 +5493,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.unitywebrequestaudio
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.unitywebrequestaudio
   assetPath: Packages/com.unity.modules.unitywebrequestaudio
   name: com.unity.modules.unitywebrequestaudio
   displayName: Unity Web Request Audio
@@ -5436,7 +5568,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.unitywebrequesttexture
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.unitywebrequesttexture
   assetPath: Packages/com.unity.modules.unitywebrequesttexture
   name: com.unity.modules.unitywebrequesttexture
   displayName: Unity Web Request Texture
@@ -5511,7 +5643,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.unitywebrequestwww
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.unitywebrequestwww
   assetPath: Packages/com.unity.modules.unitywebrequestwww
   name: com.unity.modules.unitywebrequestwww
   displayName: Unity Web Request WWW
@@ -5602,7 +5734,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.vehicles
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.vehicles
   assetPath: Packages/com.unity.modules.vehicles
   name: com.unity.modules.vehicles
   displayName: Vehicles
@@ -5673,7 +5805,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.video
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.video
   assetPath: Packages/com.unity.modules.video
   name: com.unity.modules.video
   displayName: Video
@@ -5752,7 +5884,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.vr
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.vr
   assetPath: Packages/com.unity.modules.vr
   name: com.unity.modules.vr
   displayName: VR
@@ -5833,7 +5965,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.wind
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.wind
   assetPath: Packages/com.unity.modules.wind
   name: com.unity.modules.wind
   displayName: Wind
@@ -5900,7 +6032,7 @@ m_ResolvedPackages:
   isDirectDependency: 1
   version: 1.0.0
   source: 2
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.xr
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.modules.xr
   assetPath: Packages/com.unity.modules.xr
   name: com.unity.modules.xr
   displayName: XR
@@ -5979,7 +6111,7 @@ m_ResolvedPackages:
   isDirectDependency: 0
   version: 1.0.0
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.editorcoroutines
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.editorcoroutines
   assetPath: Packages/com.unity.editorcoroutines
   name: com.unity.editorcoroutines
   displayName: Editor Coroutines
@@ -6056,7 +6188,7 @@ m_ResolvedPackages:
   isDirectDependency: 0
   version: 1.2.2
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.performance.profile-analyzer
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.performance.profile-analyzer
   assetPath: Packages/com.unity.performance.profile-analyzer
   name: com.unity.performance.profile-analyzer
   displayName: Profile Analyzer
@@ -6140,7 +6272,7 @@ m_ResolvedPackages:
   isDirectDependency: 0
   version: 1.2.6
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.testtools.codecoverage
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.testtools.codecoverage
   assetPath: Packages/com.unity.testtools.codecoverage
   name: com.unity.testtools.codecoverage
   displayName: Code Coverage
@@ -6258,12 +6390,131 @@ m_ResolvedPackages:
     compatibilityLevel: 0
     minimumPackageVersion: 1.2.6
     minimumUnityVersion: 2019.3.0a1
+- packageId: com.unity.splines@2.6.1
+  testable: 0
+  isDirectDependency: 0
+  version: 2.6.1
+  source: 1
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.splines
+  assetPath: Packages/com.unity.splines
+  name: com.unity.splines
+  displayName: Splines
+  author:
+    name: 
+    email: 
+    url: 
+  category: Tool
+  type: tool
+  description: Work with curves and paths. Use the Splines package to generate objects
+    and behaviors along paths, create trajectories, and draw shapes.
+  errors: []
+  versions:
+    all:
+    - 0.1.0-preview.1
+    - 1.0.0-pre.5
+    - 1.0.0-pre.7
+    - 1.0.0-pre.8
+    - 1.0.0-pre.9
+    - 1.0.0
+    - 1.0.1
+    - 2.0.0-pre.2
+    - 2.0.0-pre.4
+    - 2.0.0
+    - 2.1.0
+    - 2.2.0
+    - 2.2.1
+    - 2.3.0
+    - 2.4.0
+    - 2.5.1
+    - 2.5.2
+    - 2.6.0
+    - 2.6.1
+    - 2.7.1
+    - 2.7.2
+    compatible:
+    - 2.6.1
+    - 2.7.1
+    - 2.7.2
+    recommended: 2.6.1
+    deprecated: []
+  dependencies:
+  - name: com.unity.ugui
+    version: 1.0.0
+  - name: com.unity.mathematics
+    version: 1.2.1
+  - name: com.unity.settings-manager
+    version: 1.0.3
+  resolvedDependencies:
+  - name: com.unity.ugui
+    version: 2.0.0
+  - name: com.unity.modules.ui
+    version: 1.0.0
+  - name: com.unity.modules.imgui
+    version: 1.0.0
+  - name: com.unity.mathematics
+    version: 1.3.2
+  - name: com.unity.settings-manager
+    version: 2.0.1
+  keywords:
+  - spline
+  - curve
+  - path
+  registry:
+    id: main
+    name: 
+    url: https://packages.unity.com
+    scopes: []
+    isDefault: 1
+    capabilities: 7
+    configSource: 0
+  hideInEditor: 1
+  entitlements:
+    licensingModel: 1
+  isAssetStorePackage: 0
+  datePublishedTicks: 638522292040000000
+  documentationUrl: 
+  hasRepository: 1
+  repository:
+    type: git
+    url: https://github.cds.internal.unity3d.com/unity/com.unity.splines.git
+    revision: f77ddc46ebeef1a8dca1264827b93dbec50d3772
+    path: 
+  unityLifecycle:
+    version: 2.6.1
+    nextVersion: 
+    recommendedVersion: 
+    isDeprecated: 0
+    deprecationMessage: 
+  isDeprecated: 0
+  deprecationMessage: 
+  git:
+    hash: 
+    revision: 
+  upmReserved: '{"changelog":"### Bug Fixes\n\n- [SPLB-275] Fixed a bug where the
+    `SplineContainer` component would throw warning when entering playmode.\n- [SPLB-266]
+    Fixed a bug where instantiating a `SplineExtrude` component at runtime would
+    throw errors.\n- [SPLB-269] Fixed a bug where instantiating a `SplineAnimate`
+    component at runtime would throw errors.\n- [SPLB-260] Fixed a bug where playing
+    a `SplineAnimate` from a start method would not work.\n- [SPLB-267] Fixed a bug
+    where undoing a spline insertion in a container would throw errors from the `SplineInstantiate`
+    component.\n- [SPLB-261] Fixed a bug where the knot placement tool would not
+    work when multiple scene views were opened.\n- [SPLB-253] Fixed a bug where using
+    the knot placement tool in 2D mode would not work if the grids are turned off.\n-
+    [SPLB-258] Fixed a bug where destroying a component would throw errors in the
+    console."}'
+  assetStore:
+    productId: 
+  fingerprint: 930eaf55e68be9f5d58f63035b2a96d9c3c3e695
+  editorCompatibility:
+    compatibilityLevel: 0
+    minimumPackageVersion: 2.6.1
+    minimumUnityVersion: 2022.3.0a1
 - packageId: com.unity.settings-manager@2.0.1
   testable: 0
   isDirectDependency: 0
   version: 2.0.1
   source: 1
-  resolvedPath: C:\Users\Ruibo\Desktop\UTAD\MADLabOutbreakTesting\Library\PackageCache\com.unity.settings-manager
+  resolvedPath: C:\Users\Ruibo\Desktop\UTAD Jogos\MADLabOutbreakTesting\Library\PackageCache\com.unity.settings-manager
   assetPath: Packages/com.unity.settings-manager
   name: com.unity.settings-manager
   displayName: Settings Manager
