@@ -62,18 +62,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\ScoreManager.cs" />
-    <Compile Include="Assets\Scripts\PlayerCameraY.cs" />
     <Compile Include="Assets\Scripts\DetectAlertChase.cs" />
     <Compile Include="Assets\Scripts\CameraAimController.cs" />
     <Compile Include="Assets\Scripts\PlayerHealthBar.cs" />
     <Compile Include="Assets\Scripts\GunScript.cs" />
+    <Compile Include="Assets\Scripts\PlayerCamera.cs" />
     <Compile Include="Assets\Scripts\AmmoDisplay.cs" />
     <Compile Include="Assets\Scripts\MeleeWeaponPlayer.cs" />
     <Compile Include="Assets\Scripts\Boss.cs" />
     <Compile Include="Assets\Scripts\EntityHealth.cs" />
     <Compile Include="Assets\Scripts\SpawnHostile.cs" />
     <Compile Include="Assets\Scripts\RandomPatrolling.cs" />
-    <Compile Include="Assets\Scripts\PlayerCameraXZ.cs" />
     <Compile Include="Assets\Scripts\PlayerLocomotion.cs" />
     <Compile Include="Assets\Scripts\MeleeWeaponAI.cs" />
   </ItemGroup>
