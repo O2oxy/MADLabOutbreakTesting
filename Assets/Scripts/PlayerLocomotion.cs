@@ -4,8 +4,6 @@ public class PlayerLocomotion : MonoBehaviour
 {
     Animator animator;
     Vector2 input;
-    public float speed = 5f; // Base player speed
-    public float sprintMultiplier = 2f; // Sprint speed multiplier
     bool isSprinting = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -26,10 +24,6 @@ public class PlayerLocomotion : MonoBehaviour
     {
         input.x = Input.GetAxis("Horizontal");
         input.y = Input.GetAxis("Vertical");
-
-        // Apply the adjusted speed
-        Vector3 moveDirection = new Vector3(input.x, 0, input.y).normalized * speed * (isSprinting ? sprintMultiplier : 1f);
-        transform.Translate(moveDirection * Time.deltaTime, Space.World);
 
         animator.SetFloat("InputX", input.x);
         animator.SetFloat("InputY", input.y);
