@@ -5,16 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638681566192304111
-    m_Hash: 4167787974
+      ticks: 638683235329019883
+    m_Hash: 2495136412
   m_LockFileStatus:
     m_FilePath: C:/Users/Ruibo/Desktop/UTAD/MADLabOutbreakTesting/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638681566192309213
-    m_Hash: 1120502534
+      ticks: 638683235329067866
+    m_Hash: 2728628106
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_LocalPackages:
@@ -6430,9 +6430,11 @@ m_ResolvedPackages:
     - 2.6.0
     - 2.6.1
     - 2.7.1
+    - 2.7.2
     compatible:
     - 2.6.1
     - 2.7.1
+    - 2.7.2
     recommended: 2.6.1
     deprecated: []
   dependencies:
