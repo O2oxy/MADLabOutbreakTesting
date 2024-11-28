@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\ScoreManager.cs" />
     <Compile Include="Assets\Scripts\DetectAlertChase.cs" />
+    <Compile Include="Assets\MainMenuController.cs" />
     <Compile Include="Assets\Scripts\CameraAimController.cs" />
     <Compile Include="Assets\Scripts\PlayerHealthBar.cs" />
     <Compile Include="Assets\Scripts\GunScript.cs" />
