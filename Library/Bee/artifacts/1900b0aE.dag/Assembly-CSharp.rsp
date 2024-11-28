@@ -437,6 +437,7 @@
 -analyzer:"C:/Program Files/Unity/Hub/Editor/6000.0.24f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.Properties.SourceGenerator.dll"
 -analyzer:"C:/Program Files/Unity/Hub/Editor/6000.0.24f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll"
 -analyzer:"C:/Program Files/Unity/Hub/Editor/6000.0.24f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.UIToolkit.SourceGenerator.dll"
+"Assets/OptionsMenu.cs"
 "Assets/Scripts/AmmoDisplay.cs"
 "Assets/Scripts/Boss.cs"
 "Assets/Scripts/CameraAimController.cs"
@@ -451,6 +452,7 @@
 "Assets/Scripts/RandomPatrolling.cs"
 "Assets/Scripts/ScoreManager.cs"
 "Assets/Scripts/SpawnHostile.cs"
+"Assets/StartMenu.cs"
 -langversion:9.0
 /deterministic
 /optimize+
