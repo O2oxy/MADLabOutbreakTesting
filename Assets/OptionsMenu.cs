@@ -18,9 +18,11 @@ public class OptionsMenu : MonoBehaviour
     private Resolution[] availableResolutions;
     private bool isInitialized = false; // Tracks if UI has been initialized
 
-    [Header("Start Menu Reference")]
+    [Header("Start Menu Script")]
     public StartMenu startMenu; // Reference to StartMenu script for confirm exit toggle
-    
+    [Header("Start Menu Closing")]
+    public GameObject StartMenu; // Reference to StartMenu 
+
 
     private float masterVolume;
     private float musicVolume;
@@ -92,7 +94,7 @@ public class OptionsMenu : MonoBehaviour
         gameObject.SetActive(false); // Hide Options Menu
         if (startMenu != null)
         {
-            startMenu.gameObject.SetActive(true); // Show Start Menu
+            StartMenu.SetActive(true); // Show Start Menu
         }
     }
 

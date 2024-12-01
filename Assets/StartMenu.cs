@@ -5,12 +5,14 @@ public class StartMenu : MonoBehaviour
     public GameObject optionsMenu;      // Drag the "Options Menu" Canvas here
     public GameObject startMenu;        // Drag the "Start Menu" Canvas here
     public GameObject confirmExitMenu;  // Drag the "Confirm Exit" Canvas here
+    public GameObject PlayerUI;
     private bool gameStarted = false;
     private bool menuActive = true;     // Tracks whether any menu is active
     private bool confirmExitEnabled = true;
 
     void Start()
     {
+        PlayerUI.SetActive(false); //Hides playerUI at the start of the game
         // Freeze the game initially and show the cursor
         Time.timeScale = 0f;
         UpdateCursor(true);
@@ -40,6 +42,7 @@ public class StartMenu : MonoBehaviour
     {
         gameStarted = true;
         menuActive = false;
+        PlayerUI.SetActive(true); // Shows playerUI
         startMenu.SetActive(false);
         Time.timeScale = 1f; // Resume the game
         UpdateCursor(false); // Lock and hide the cursor
