@@ -1,16 +1,39 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class MeleeAttack : MonoBehaviour
 {
     [Header("Melee Attack Settings")]
-    public float meleeRange = 2f;               // Range of the melee attack
-    public float meleeDamage = 30f;             // Damage dealt by the melee weapon
-    public float attackCooldown = 1.5f;         // Time between attacks
-    public float attackAngle = 45f;             // Arc angle in degrees
-    public LayerMask targetLayers;              // Layer mask to specify valid targets
+    public float meleeRange = 2f; // Range of the melee attack
+    public float meleeDamage = 30f; // Damage dealt by the melee weapon
+    public float attackCooldown = 1.5f; // Time between attacks
+    public float attackAngle = 45f; // Arc angle in degrees
+    public Vector3 attackOffset = Vector3.zero; // Offset for attack position
+    private LayerMask targetLayer; // Target layer for valid attacks
 
     private Transform target;
     private float lastAttackTime;
+    private Animator animator;
+    private DetectAlertChase detectAlertChase;
+    private NavMeshAgent agent; // Reference to the NavMeshAgent
+
+    private void Start()
+    {
+        animator = GetComponent<Animator>();
+        detectAlertChase = GetComponent<DetectAlertChase>();
+        agent = GetComponent<NavMeshAgent>();
+
+        if (detectAlertChase != null)
+        {
+            targetLayer = detectAlertChase.GetPlayerLayer(); // Use playerLayer from DetectAlertChase
+        }
+
+        if (animator != null)
+        {
+            // Match the animation speed with the attack cooldown
+            animator.SetFloat("AttackSpeed", 1f / attackCooldown);
+        }
+    }
 
     public void SetTarget(Transform target)
     {
@@ -19,23 +42,37 @@ public class MeleeAttack : MonoBehaviour
 
     public void AttemptAttack()
     {
-        // Ensure cooldown has passed before attacking
         if (Time.time >= lastAttackTime + attackCooldown)
         {
             PerformAttack();
             lastAttackTime = Time.time;
+
+            // Play melee attack animation
+            if (animator != null)
+            {
+                animator.CrossFade("Attack", 0.1f); // Smooth transition to attack animation
+            }
+
+            // Stop movement while attacking
+            if (agent != null)
+            {
+                agent.isStopped = true;
+            }
         }
     }
 
     private void PerformAttack()
     {
+        // Adjust position for attack detection
+        Vector3 attackPosition = transform.position + attackOffset;
+
         // Find all colliders within melee range on the specified target layers
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, meleeRange, targetLayers);
+        Collider[] hitColliders = Physics.OverlapSphere(attackPosition, meleeRange, targetLayer);
 
         foreach (Collider hitCollider in hitColliders)
         {
             // Check if the target is within the specified angle in front of the NPC
-            Vector3 directionToTarget = (hitCollider.transform.position - transform.position).normalized;
+            Vector3 directionToTarget = (hitCollider.transform.position - attackPosition).normalized;
             float angleToTarget = Vector3.Angle(transform.forward, directionToTarget);
 
             if (angleToTarget <= attackAngle / 2)
@@ -45,19 +82,28 @@ public class MeleeAttack : MonoBehaviour
                 if (targetHealth != null)
                 {
                     targetHealth.TakeDamage(meleeDamage);
-                    Debug.Log(gameObject.name + " hit " + hitCollider.name + " for " + meleeDamage + " damage.");
+                    Debug.Log($"{gameObject.name} hit {hitCollider.name} for {meleeDamage} damage.");
                 }
             }
         }
-
-        // Optional: Add animations or sound effects for the attack here
     }
 
-    // Optional: Draw attack range and arc in the editor for visualization
+    private void Update()
+    {
+        // Resume movement if the attack cooldown is not finished
+        if (agent != null && Time.time >= lastAttackTime + attackCooldown)
+        {
+            agent.isStopped = false;
+        }
+    }
+
+    // Draw attack range and offset in the editor for visualization
     private void OnDrawGizmosSelected()
     {
+        Vector3 attackPosition = transform.position + attackOffset;
+
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, meleeRange);
+        Gizmos.DrawWireSphere(attackPosition, meleeRange);
 
         // Draw the attack arc
         Vector3 forward = transform.forward * meleeRange;
@@ -68,7 +114,7 @@ public class MeleeAttack : MonoBehaviour
         Vector3 rightDirection = rightRotation * forward;
 
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position, transform.position + leftDirection);
-        Gizmos.DrawLine(transform.position, transform.position + rightDirection);
+        Gizmos.DrawLine(attackPosition, attackPosition + leftDirection);
+        Gizmos.DrawLine(attackPosition, attackPosition + rightDirection);
     }
 }
