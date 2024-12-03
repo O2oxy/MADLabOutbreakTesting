@@ -9,13 +9,15 @@ public class MeleeAttack : MonoBehaviour
     public float attackCooldown = 1.5f; // Time between attacks
     public float attackAngle = 45f; // Arc angle in degrees
     public Vector3 attackOffset = Vector3.zero; // Offset for attack position
-    private LayerMask targetLayer; // Target layer for valid attacks
+    public float rotationSpeed = 5f; // Speed of rotation to face the player
 
+    private LayerMask targetLayer; // Target layer for valid attacks
     private Transform target;
     private float lastAttackTime;
     private Animator animator;
     private DetectAlertChase detectAlertChase;
     private NavMeshAgent agent; // Reference to the NavMeshAgent
+    private bool isAttacking = false; // Tracks if the NPC is currently attacking
 
     private void Start()
     {
@@ -42,23 +44,32 @@ public class MeleeAttack : MonoBehaviour
 
     public void AttemptAttack()
     {
-        if (Time.time >= lastAttackTime + attackCooldown)
+        if (isAttacking || Time.time < lastAttackTime + attackCooldown)
+            return;
+
+        isAttacking = true;
+
+        // Stop movement and rotate to face the player
+        if (agent != null)
         {
-            PerformAttack();
-            lastAttackTime = Time.time;
-
-            // Play melee attack animation
-            if (animator != null)
-            {
-                animator.CrossFade("Attack", 0.1f); // Smooth transition to attack animation
-            }
-
-            // Stop movement while attacking
-            if (agent != null)
-            {
-                agent.isStopped = true;
-            }
+            agent.isStopped = true;
         }
+
+        if (target != null)
+        {
+            RotateTowardsTarget();
+        }
+
+        PerformAttack();
+
+        // Play melee attack animation
+        if (animator != null)
+        {
+            animator.CrossFade("Attack", 0.1f);
+        }
+
+        // Resume movement after the attack animation finishes
+        Invoke(nameof(ResetAttack), attackCooldown);
     }
 
     private void PerformAttack()
@@ -86,14 +97,43 @@ public class MeleeAttack : MonoBehaviour
                 }
             }
         }
+
+        lastAttackTime = Time.time;
+    }
+
+    private void ResetAttack()
+    {
+        isAttacking = false;
+
+        // Resume movement
+        if (agent != null)
+        {
+            agent.isStopped = false;
+        }
+    }
+
+    private void RotateTowardsTarget()
+    {
+        if (target == null)
+            return;
+
+        Vector3 direction = (target.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
     }
 
     private void Update()
     {
-        // Resume movement if the attack cooldown is not finished
-        if (agent != null && Time.time >= lastAttackTime + attackCooldown)
+        if (isAttacking)
         {
-            agent.isStopped = false;
+            // Prevent other animations from playing during the attack
+            if (animator != null)
+            {
+                animator.CrossFade("Attack", 0.1f);
+            }
+
+            // Rotate to face the player during the attack
+            RotateTowardsTarget();
         }
     }
 

@@ -7,32 +7,16 @@
       "RelativeMoniker": "D:0:0:{DFD06EFA-F670-EF96-50F3-D94D5942DE29}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\meleeweaponai.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{DFD06EFA-F670-EF96-50F3-D94D5942DE29}|Assembly-CSharp.csproj|c:\\users\\ruibo\\desktop\\utad\\madlaboutbreaktesting\\assets\\scripts\\entityhealth.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DFD06EFA-F670-EF96-50F3-D94D5942DE29}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\entityhealth.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DFD06EFA-F670-EF96-50F3-D94D5942DE29}|Assembly-CSharp.csproj|C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\assets\\scripts\\playercamera.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DFD06EFA-F670-EF96-50F3-D94D5942DE29}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\playercamera.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DFD06EFA-F670-EF96-50F3-D94D5942DE29}|Assembly-CSharp.csproj|c:\\users\\ruibo\\desktop\\utad\\madlaboutbreaktesting\\assets\\scripts\\detectalertchase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{DFD06EFA-F670-EF96-50F3-D94D5942DE29}|Assembly-CSharp.csproj|C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\assets\\scripts\\detectalertchase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{DFD06EFA-F670-EF96-50F3-D94D5942DE29}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\detectalertchase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{DFD06EFA-F670-EF96-50F3-D94D5942DE29}|Assembly-CSharp.csproj|C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\assets\\optionsmenu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DFD06EFA-F670-EF96-50F3-D94D5942DE29}|Assembly-CSharp.csproj|solutionrelative:assets\\optionsmenu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{DFD06EFA-F670-EF96-50F3-D94D5942DE29}|Assembly-CSharp.csproj|c:\\users\\ruibo\\desktop\\utad\\madlaboutbreaktesting\\assets\\scripts\\randompatrolling.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DFD06EFA-F670-EF96-50F3-D94D5942DE29}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\randompatrolling.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{DFD06EFA-F670-EF96-50F3-D94D5942DE29}|Assembly-CSharp.csproj|C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\assets\\scripts\\playerlocomotion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DFD06EFA-F670-EF96-50F3-D94D5942DE29}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\playerlocomotion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DFD06EFA-F670-EF96-50F3-D94D5942DE29}|Assembly-CSharp.csproj|c:\\users\\ruibo\\desktop\\utad\\madlaboutbreaktesting\\assets\\startmenu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DFD06EFA-F670-EF96-50F3-D94D5942DE29}|Assembly-CSharp.csproj|solutionrelative:assets\\startmenu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DFD06EFA-F670-EF96-50F3-D94D5942DE29}|Assembly-CSharp.csproj|C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\assets\\scripts\\cameraaimcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{DFD06EFA-F670-EF96-50F3-D94D5942DE29}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\cameraaimcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{DFD06EFA-F670-EF96-50F3-D94D5942DE29}|Assembly-CSharp.csproj|C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\assets\\scripts\\entityhealth.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DFD06EFA-F670-EF96-50F3-D94D5942DE29}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\entityhealth.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -46,13 +30,13 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "EntityHealth.cs",
               "DocumentMoniker": "C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\Assets\\Scripts\\EntityHealth.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\EntityHealth.cs",
               "ToolTip": "C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\Assets\\Scripts\\EntityHealth.cs",
               "RelativeToolTip": "Assets\\Scripts\\EntityHealth.cs",
-              "ViewState": "AgIAAC0AAAAAAAAAAAAowAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAC0AAAAAAAAAAAA5wAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-12-02T19:31:22.312Z",
               "EditorCaption": ""
@@ -65,86 +49,35 @@
               "RelativeDocumentMoniker": "Assets\\Scripts\\MeleeWeaponAI.cs",
               "ToolTip": "C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\Assets\\Scripts\\MeleeWeaponAI.cs",
               "RelativeToolTip": "Assets\\Scripts\\MeleeWeaponAI.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAUwCEAAAAqAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-12-02T17:35:27.675Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "DetectAlertChase.cs",
               "DocumentMoniker": "C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\Assets\\Scripts\\DetectAlertChase.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\DetectAlertChase.cs",
               "ToolTip": "C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\Assets\\Scripts\\DetectAlertChase.cs",
               "RelativeToolTip": "Assets\\Scripts\\DetectAlertChase.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAADoAAAAAAAAAAAArwE4AAAAYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-12-02T16:59:08.514Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "OptionsMenu.cs",
-              "DocumentMoniker": "C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\Assets\\OptionsMenu.cs",
-              "RelativeDocumentMoniker": "Assets\\OptionsMenu.cs",
-              "ToolTip": "C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\Assets\\OptionsMenu.cs",
-              "RelativeToolTip": "Assets\\OptionsMenu.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAeAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-28T11:56:24.265Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "StartMenu.cs",
-              "DocumentMoniker": "C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\Assets\\StartMenu.cs",
-              "RelativeDocumentMoniker": "Assets\\StartMenu.cs",
-              "ToolTip": "C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\Assets\\StartMenu.cs",
-              "RelativeToolTip": "Assets\\StartMenu.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAABMAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-28T11:55:07.41Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "PlayerCamera.cs",
-              "DocumentMoniker": "C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\Assets\\Scripts\\PlayerCamera.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\PlayerCamera.cs",
-              "ToolTip": "C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\Assets\\Scripts\\PlayerCamera.cs",
-              "RelativeToolTip": "Assets\\Scripts\\PlayerCamera.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAFAAAAAAAAAA==",
+              "Title": "RandomPatrolling.cs",
+              "DocumentMoniker": "C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\Assets\\Scripts\\RandomPatrolling.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\RandomPatrolling.cs",
+              "ToolTip": "C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\Assets\\Scripts\\RandomPatrolling.cs",
+              "RelativeToolTip": "Assets\\Scripts\\RandomPatrolling.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAowAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-26T19:53:32.136Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "CameraAimController.cs",
-              "DocumentMoniker": "C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\Assets\\Scripts\\CameraAimController.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\CameraAimController.cs",
-              "ToolTip": "C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\Assets\\Scripts\\CameraAimController.cs",
-              "RelativeToolTip": "Assets\\Scripts\\CameraAimController.cs",
-              "ViewState": "AgIAADEAAAAAAAAAAAAiwEgAAABWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-26T17:06:50.581Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "PlayerLocomotion.cs",
-              "DocumentMoniker": "C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\Assets\\Scripts\\PlayerLocomotion.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\PlayerLocomotion.cs",
-              "ToolTip": "C:\\Users\\Ruibo\\Desktop\\UTAD\\MADLabOutbreakTesting\\Assets\\Scripts\\PlayerLocomotion.cs",
-              "RelativeToolTip": "Assets\\Scripts\\PlayerLocomotion.cs",
-              "ViewState": "AgIAAAoAAAAAAAAAAAAgwBoAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-26T08:34:41.808Z",
+              "WhenOpened": "2024-12-03T08:58:22.961Z",
               "EditorCaption": ""
             }
           ]
